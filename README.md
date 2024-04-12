@@ -1,1 +1,2 @@
-A Project from 42 that is sznced
+A Project from 42
+Now 
