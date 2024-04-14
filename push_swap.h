@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/12 16:25:05 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/14 11:34:03 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,27 +37,39 @@ typedef struct s_dlist
 	struct s_dlist *next;
 } t_dlist;
 
+void	put_content(void *n);
+void	*content(int i);
+void	ft_putdlst(t_dlist **lst, void (*t_dlistprint)(void *));
+void	ft_putnbr(int n);
+int		ft_dlstsize(t_dlist *dlst);
+int		ft_dlstsize(t_dlist *dlst);
+void	ft_dlstadd_front(t_dlist **dlst, t_dlist *new);
+void    ft_dlstadd_rotate(t_dlist **dlst, int n, int direction);
+void	ft_dlstadd_back(t_dlist **lst, t_dlist *new);
+t_dlist	*ft_dlstnew(void *content);
+void	put_dlist(t_dlist **lst, void (*t_dlistprint)(void *));
+
 // operations
 // -sa (swap a): Swap the first 2 elements at the top of stack a
-void	sa(t_dlist a);
+void	sa(t_dlist **a);
 // -sb (swap b): Swap the first 2 elements at the top of stack b.
-void	sb(t_dlist b);
+void	sb(t_dlist **b);
 // ss : sa and sb at the same time.
-void	ss(t_dlist a, t_dlist b);
+void	ss(t_dlist **a, t_dlist **b);
 // pa (push a): Take the first element at the top of b and put it at the top of a.
-void	pa(t_dlist a, t_dlist b);
+void	pa(t_dlist **a, t_dlist **b);
 // pb (push b): Take the first element at the top of a and put it at the top of b.
-void	pa(t_dlist a, t_dlist b);
+void	pb(t_dlist **a, t_dlist **b);
 // ra (rotate a): Shift up all elements of stack a by 1.
-void	ra(t_dlist a);
+void	ra(t_dlist **a);
 // rb (rotate b): Shift up all elements of stack b by 1.
-void	rb(t_dlist a);
+void	rb(t_dlist **a);
 // rr : ra and rb at the same time.
-void	rr(t_dlist a, t_dlist b);
+void	rr(t_dlist **a, t_dlist **b);
 // rra (reverse rotate a): Shift down all elements of stack a by 1.
-void	rra(t_dlist a, t_dlist b);
+void	rra(t_dlist **a, t_dlist **b);
 // rrb (reverse rotate b): Shift down all elements of stack b by 1.
-void	rrb(t_dlist a);
+void	rrb(t_dlist **a);
 // rrr : rra and rrb at the same time.
-void	rrr(t_dlist a, t_dlist b);
+void	rrr(t_dlist **a, t_dlist **b);
 #endif
