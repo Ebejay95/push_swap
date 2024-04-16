@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:47:26 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/14 12:30:01 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/16 20:50:01 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,3 +103,48 @@ void	ft_putnbr(int n)
 		ft_putnbr(n);
 	write(1, &nbr, 1);
 }
+
+t_dlist	*ft_dlstlast(t_dlist *lst)
+{
+	while (lst != NULL)
+	{
+		if (lst->next == NULL)
+			return (lst);
+		lst = lst->next;
+	}
+	return (lst);
+}
+
+void    ft_dlstadd_rotate(t_dlist **lst, int n, int direction)
+{
+    int     	len;
+    t_dlist	*	tmp;
+    t_dlist	*	last;
+    len = ft_dlstsize(*lst);
+	n = n % len;
+	while (n > 0)
+	{
+		if (direction == 0)
+		{
+			tmp = (*lst);
+			(*lst) = (*lst)->next;
+			(*lst)->prev = NULL;
+			last = ft_dlstlast((*lst));
+			last->next = tmp;
+			tmp->prev = last;
+			tmp->next = NULL;
+		}
+		else
+		{
+			tmp = ft_dlstlast((*lst));
+			if(tmp->prev)
+				tmp->prev->next = NULL;
+			tmp->next = (*lst);
+			(*lst)->prev = tmp;
+			tmp->prev = NULL;
+			(*lst) = tmp;
+		}
+		n--;
+	}
+}
+

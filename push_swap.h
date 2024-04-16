@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/14 11:34:03 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/14 21:10:24 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	rb(t_dlist **a);
 // rr : ra and rb at the same time.
 void	rr(t_dlist **a, t_dlist **b);
 // rra (reverse rotate a): Shift down all elements of stack a by 1.
-void	rra(t_dlist **a, t_dlist **b);
+void	rra(t_dlist **a);
 // rrb (reverse rotate b): Shift down all elements of stack b by 1.
 void	rrb(t_dlist **a);
 // rrr : rra and rrb at the same time.
