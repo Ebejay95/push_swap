@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:25:56 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/14 21:10:55 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/16 21:43:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,37 +101,37 @@ void	pb(t_dlist **a, t_dlist **b)
 // ra (rotate a): Shift up all elements of stack a by 1.
 void	ra(t_dlist **a)
 {
-	ft_dlstadd_rotate(a, 1, 0);
+	ft_dlstrotate(a, 1, 0);
 }
 
 // rb (rotate b): Shift up all elements of stack b by 1.
 void	rb(t_dlist **b)
 {
-	ft_dlstadd_rotate(b, 1, 0);
+	ft_dlstrotate(b, 1, 0);
 }
 
 // rr : ra and rb at the same time.
 void	rr(t_dlist **a, t_dlist **b)
 {
-	ft_dlstadd_rotate(a, 1, 0);
-	ft_dlstadd_rotate(b, 1, 0);
+	ft_dlstrotate(a, 1, 0);
+	ft_dlstrotate(b, 1, 0);
 }
 
 // ra (rotate a): Shift up all elements of stack a by 1.
 void	rra(t_dlist **a)
 {
-	ft_dlstadd_rotate(a, 1, 1);
+	ft_dlstrotate(a, 1, 1);
 }
 
 // rb (rotate b): Shift up all elements of stack b by 1.
 void	rrb(t_dlist **b)
 {
-	ft_dlstadd_rotate(b, 1, 1);
+	ft_dlstrotate(b, 1, 1);
 }
 
 // rrr : ra and rb at the same time.
 void	rrr(t_dlist **a, t_dlist **b)
 {
-	ft_dlstadd_rotate(a, 1, 1);
-	ft_dlstadd_rotate(b, 1, 1);
+	ft_dlstrotate(a, 1, 1);
+	ft_dlstrotate(b, 1, 1);
 }

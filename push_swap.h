@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/14 21:10:24 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/16 21:56:34 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <math.h>
+#include "./libft/libft.h"
 
 // push swap unit
 typedef struct s_psu
@@ -29,24 +30,9 @@ typedef struct s_psu
 	int node_target_dist;
 } t_psu;
 
-// doyble linked list
-typedef struct s_dlist
-{
-	void *content;
-	struct s_dlist *prev;
-	struct s_dlist *next;
-} t_dlist;
-
 void	put_content(void *n);
 void	*content(int i);
-void	ft_putdlst(t_dlist **lst, void (*t_dlistprint)(void *));
-void	ft_putnbr(int n);
-int		ft_dlstsize(t_dlist *dlst);
-int		ft_dlstsize(t_dlist *dlst);
-void	ft_dlstadd_front(t_dlist **dlst, t_dlist *new);
-void    ft_dlstadd_rotate(t_dlist **dlst, int n, int direction);
-void	ft_dlstadd_back(t_dlist **lst, t_dlist *new);
-t_dlist	*ft_dlstnew(void *content);
+void	ft_dlstput(t_dlist **lst, void (*t_dlistprint)(void *));
 void	put_dlist(t_dlist **lst, void (*t_dlistprint)(void *));
 
 // operations

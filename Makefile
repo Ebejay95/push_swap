@@ -6,7 +6,7 @@
 #    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/04/16 19:32:10 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/04/16 21:55:43 by jonathanebe      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,8 +26,7 @@ SRCS= \
 ./push_swap.c \
 ./operations.c \
 ./operations2.c \
-./listhelpers.c \
-./debug.c \
+./put.c \
 
 CFILES= $(SRCS)
 OBJECTS=$(CFILES:.c=.o)

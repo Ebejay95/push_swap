@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/16 20:50:46 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/16 21:56:34 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ int main(void)
 	ft_dlstadd_back(stack_b, ft_dlstnew(content(11)));
 	ft_dlstadd_back(stack_b, ft_dlstnew(content(12)));
 	ft_dlstadd_back(stack_b, ft_dlstnew(content(13)));
-	ft_putdlst(stack_a, put_content);
+	ft_dlstput(stack_a, put_content);
 	write(1, "#\n", 2);
-	ft_putdlst(stack_b, put_content);
+	ft_dlstput(stack_b, put_content);
 	write(1, "___________________\n", 20);
 	return (0);
 }
