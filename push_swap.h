@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/17 10:03:57 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/17 14:47:52 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ typedef struct s_psu
 	int num_data;
 	int move_cost_a;
 	int move_cost_b;
-	int node_pos;
+	int position;
 	int node_target_dist;
 } t_psu;
 
 void	put_content(void *n);
-int		get_content(void *n);
+t_psu	get_content(void *n);
 void	*set_content(int i);
 void	ft_dlstput(t_dlist **lst, void (*t_dlistprint)(void *));
 void	put_dlist(t_dlist **lst, void (*t_dlistprint)(void *));
