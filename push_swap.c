@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/17 10:18:14 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/17 11:26:28 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,18 @@ int is_sorted(t_dlist **a, t_dlist **b)
 	if(i == 0)
 		return (1);
 	return (0);
+}
+
+int	sort(t_dlist **a, t_dlist **b)
+{
+	int operations;
+
+	operations = 0;
+	if(!is_sorted(a, b))
+	{
+		operations++;
+	}
+	return (operations);
 }
 
 int validate_arg(char *arg)
@@ -85,6 +97,7 @@ int main(int argc, char **argv)
 		write(1, "Error\n", 6);
 		return (0);
 	}
-	printf("%i\n", is_sorted(stack_a, stack_b));
+	ft_putnbr(sort(stack_a, stack_b));
+	write(1, "\n", 1);
 	return (0);
 }

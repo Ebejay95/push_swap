@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
+#    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/04/16 21:55:43 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/04/17 11:22:01 by jeberle          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ DEPFILES=push_swap.h
 all: $(LIBFT_LIB) $(NAME)
 
 $(LIBFT_LIB):
+	@git submodule update --init --recursive --remote
 	$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJECTS)
