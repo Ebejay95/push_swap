@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/17 19:27:23 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/17 21:42:15 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,40 @@ int is_sorted(t_dlist **a, t_dlist **b)
 	return (0);
 }
 
+void	update_distances(t_dlist **a, t_dlist **b)
+{
+	t_psu	*tmpa;
+	t_psu	*tmpb;
+
+	if ((*b) != NULL)
+	{
+		while ((*a) != NULL)
+		{
+			tmpb = (*b)->content;
+			tmpa = (*a)->content;
+			tmpa->distance = tmpa->num_data - tmpb->num_data;
+			a = &((*a)->next);
+		}
+	}
+}
+
 void	update_meta(t_dlist **a, t_dlist **b)
 {
 	int		position;
 	t_psu	*tmp;
+	t_dlist *lst;
 
+	lst = (*a);
 	position = 0;
-	while ((*a) != NULL)
+	while (lst != NULL)
 	{
-		tmp = (*a)->content;
+		tmp = lst->content;
 		tmp->position = position;
 		position++;
-		a = &((*a)->next);
+		lst = lst->next;
 	}
 	position = 0;
+	update_distances(a,b);
 	while ((*b) != NULL)
 	{
 		tmp = (*b)->content;
@@ -85,9 +105,7 @@ int	get_b_effective_pos(int ref, t_dlist **b)
 		position++;
 	}
 	if(INT_MIN == valbrd)
-	{
 		return (ft_dlstsize(*b) - 1);
-	}
 	return (pos_max);
 }
 
@@ -98,14 +116,10 @@ int	calc_b_costs(int ref, t_dlist **b)
 
 	len = ft_dlstsize((*b));
 	position = get_b_effective_pos(ref, b);
-	if (position > (len / 2))
-		return (len - position);
-	else if (position < (len / 2))
-		return (position + 1);
-	else if (position == (len / 2) && ft_even(len))
-		return ((len / 2));
-	else
-		return ((len / 2) + 1);
+	if (position > (len - position))
+		return ((len - position) * (-1));
+	else 
+		return (position);
 }
 
 void	calc_costs(t_dlist **a, t_dlist **b)
@@ -120,24 +134,28 @@ void	calc_costs(t_dlist **a, t_dlist **b)
 	{
 		tmp = lst->content;
 		if (tmp->position > (alen / 2))
-			tmp->move_cost_a = alen - tmp->position;
+			tmp->move_cost_a = 0 - (alen - tmp->position);
 		else if (tmp->position < (alen / 2))
-			tmp->move_cost_a = tmp->position + 1;
-		else if (tmp->position == (alen / 2) && ft_even(alen))
-			tmp->move_cost_a = (alen / 2);
+			tmp->move_cost_a = tmp->position;
 		else
-			tmp->move_cost_a = (alen / 2) + 1;
+		{
+			if (ft_even(alen))
+				tmp->move_cost_a = (alen / 2);
+			else
+				tmp->move_cost_a = tmp->position;
+		}
 		if(b != NULL)
 			tmp->move_cost_b = calc_b_costs(tmp->num_data, b);
+		tmp->abs_cost = ft_abs(tmp->move_cost_b) + ft_abs(tmp->move_cost_a);
 		lst = lst->next;
 	}
 }
 
-void	perform_operations(t_dlist **a, t_dlist **b)
-{
-	// get cheapest node
-	
-}
+//void	perform_operations(t_dlist **a, t_dlist **b)
+//{
+//	// get cheapest node
+//	
+//}
 
 int	sort(t_dlist **a, t_dlist **b)
 {
@@ -159,7 +177,7 @@ int	sort(t_dlist **a, t_dlist **b)
 		write(1, "#\n", 2);
 		ft_dlstput(b, put_content);
 		write(1, "___________________\n", 20);
-		perform_operations(a, b);
+		//perform_operations(a, b);
 		operations++;
 	}
 	return (operations);
