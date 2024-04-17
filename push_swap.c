@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/17 18:25:59 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/17 19:27:23 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,10 +155,10 @@ int	sort(t_dlist **a, t_dlist **b)
 	{
 		update_meta(a, b);
 		calc_costs(a, b);
-		//ft_dlstput(a, put_content);
-		//write(1, "#\n", 2);
-		//ft_dlstput(b, put_content);
-		//write(1, "___________________\n", 20);
+		ft_dlstput(a, put_content);
+		write(1, "#\n", 2);
+		ft_dlstput(b, put_content);
+		write(1, "___________________\n", 20);
 		perform_operations(a, b);
 		operations++;
 	}
