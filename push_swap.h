@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/16 21:56:34 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/17 10:03:57 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ typedef struct s_psu
 } t_psu;
 
 void	put_content(void *n);
-void	*content(int i);
+int		get_content(void *n);
+void	*set_content(int i);
 void	ft_dlstput(t_dlist **lst, void (*t_dlistprint)(void *));
 void	put_dlist(t_dlist **lst, void (*t_dlistprint)(void *));
 

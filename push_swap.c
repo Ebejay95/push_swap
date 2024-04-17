@@ -3,43 +3,88 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/16 21:56:34 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/04/17 10:18:14 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int main(void)
+int is_sorted(t_dlist **a, t_dlist **b)
+{
+	int i;
+
+	i = 0;
+	if(ft_dlstsize((*b)) != 0)
+		return (0);
+	while ((*a) != NULL)
+	{
+		if((*a)->prev != NULL)
+		{
+			if(get_content((*a)->content) < get_content((*a)->prev->content))
+				i++;
+		}
+		a = &((*a)->next); 
+	}
+	if(i == 0)
+		return (1);
+	return (0);
+}
+
+int validate_arg(char *arg)
+{
+	int i;
+
+	i = 0;
+	if (*arg == 43 || *arg == 45)
+	{
+		printf("waspre\n");
+		i++;
+	}
+	if(ft_isdigit(arg[i]))
+		return (0);
+	return (1);
+}
+
+void	fill_initial(t_dlist **stack_a, int argc, char **argv, int *e)
+{
+	int		i;
+
+	i = 1;
+	while (i < argc)
+	{
+		if(validate_arg(argv[i]) != 0)
+			(*e)++;
+		ft_dlstadd_back(stack_a, ft_dlstnew(set_content(ft_atoi(argv[i]))));
+		i++;
+	}
+}
+
+int main(int argc, char **argv)
 {
 	t_dlist **stack_a;
 	t_dlist **stack_b;
 	t_dlist *stackanuller;
 	t_dlist *stackbnuller;
-	
+	int error;
+
+	error = 0;
 	stackanuller = NULL;
 	stackbnuller = NULL;
 	stack_a = &stackanuller;
 	stack_b = &stackbnuller;
-	ft_dlstadd_back(stack_a, ft_dlstnew(content(0)));
-	ft_dlstadd_back(stack_a, ft_dlstnew(content(1)));
-	ft_dlstadd_back(stack_a, ft_dlstnew(content(2)));
-	ft_dlstadd_back(stack_a, ft_dlstnew(content(3)));
-	ft_dlstadd_back(stack_a, ft_dlstnew(content(4)));
-	ft_dlstadd_back(stack_a, ft_dlstnew(content(5)));
-	ft_dlstadd_back(stack_a, ft_dlstnew(content(6)));
-	ft_dlstadd_back(stack_b, ft_dlstnew(content(7)));
-	ft_dlstadd_back(stack_b, ft_dlstnew(content(8)));
-	ft_dlstadd_back(stack_b, ft_dlstnew(content(9)));
-	ft_dlstadd_back(stack_b, ft_dlstnew(content(10)));
-	ft_dlstadd_back(stack_b, ft_dlstnew(content(11)));
-	ft_dlstadd_back(stack_b, ft_dlstnew(content(12)));
-	ft_dlstadd_back(stack_b, ft_dlstnew(content(13)));
-	ft_dlstput(stack_a, put_content);
-	write(1, "#\n", 2);
-	ft_dlstput(stack_b, put_content);
-	write(1, "___________________\n", 20);
+	fill_initial(stack_a, argc, argv, &error);
+	if(ft_dlstsize((*stack_a)) < 2 && error == 0)
+	{
+		write(1, "0\n", 2);
+		return (0);
+	} else if(error > 0)
+	{
+		write(1, "Error\n", 6);
+		return (0);
+	}
+	printf("%i\n", is_sorted(stack_a, stack_b));
 	return (0);
 }
