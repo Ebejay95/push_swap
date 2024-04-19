@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/18 18:12:20 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/19 15:53:39 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,63 +151,70 @@ void	calc_costs(t_dlist **a, t_dlist **b)
 	}
 }
 
-//t_dlist *get_cheapest_node(t_dlist **a)
-//{
-//	t_psu tmp;
-//	t_dlist *current;
-//	t_dlist *cheapest;
-//	int costref;
-//
-//	cheapest = NULL;
-//	costref = INT_MAX;
-//	current = (*a);
-//	while (current != NULL)
-//	{
-//		tmp = get_content(current->content);
-//		if(tmp->abs_cost <= costref)
-//		{
-//			costref = tmp->abs_cost;
-//			if(cheapest && get_content(cheapest->content)->distance > 0)
-//			{
-//				if(get_content(cheapest->content)->distance->distance > tmp->distance)
-//					cheapest = current;
-//			}
-//			else
-//				cheapest = current;
-//		}
-//		current = current->next;
-//	}
-//	return (cheapest);
-//}
-//
+t_dlist *get_cheapest_node(t_dlist **a)
+{
+	t_psu tmp;
+	t_dlist *current;
+	t_dlist *cheapest;
+	int costref;
+
+	cheapest = NULL;
+	costref = INT_MAX;
+	current = (*a);
+	while (current != NULL)
+	{
+		tmp = get_content(current->content);
+		if(tmp.abs_cost <= costref)
+		{
+			costref = tmp.abs_cost;
+			if(cheapest && get_content(cheapest->content).distance > 0)
+			{
+				if(get_content(cheapest->content).distance > tmp.distance)
+					cheapest = current;
+			}
+			else
+				cheapest = current;
+		}
+		current = current->next;
+	}
+	return (cheapest);
+}
+
+
 //void	perform_operations(t_dlist **a, t_dlist **b)
-//{
-//	t_dlist *cheapest;
-//	int		direction;
-//	int		op_count;
-//
-//	cheapest = get_cheapest_node(a);
-//	op_count = ft_abs(cheapest->move_cost_a);
-//	direction = ft_ispos(cheapest->move_cost_a)
-//	while (op_count != 0)
-//	{
-//		if(direction)
-//			ra((*a));
-//		else
-//			rra((*a));
-//		op_count--;
-//	}
-//	op_count = ft_abs(cheapest->move_cost_b);
-//	direction = ft_ispos(cheapest->move_cost_b)
-//	while (op_count != 0)
-//	{
-//		if(direction)
-//			rb((*b));
-//		else
-//			rrb((*b));
-//		op_count--;
-//	}
-//}
+void	perform_operations(t_dlist **a)
+{
+	t_dlist *cheapest;
+	int		direction;
+	int		op_count;
+
+	cheapest = get_cheapest_node(a);
+	printf("CHEAP: %i\n", get_content(cheapest->content).num_data);
+	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
+	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
+	printf("ROT A: %i\n", op_count);
+	printf("DIR A: %i\n", direction);
+	while (op_count > 0)
+	{
+		if(direction)
+			printf("ra\n"); //rb(b);
+		else
+			printf("rra\n"); //rrb(b);
+		op_count--;
+	}
+	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
+	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
+	printf("ROT B: %i\n", op_count);
+	printf("DIR B: %i\n", direction);
+	while (op_count > 0)
+	{
+		if(direction)
+			printf("rb\n"); //rb(b);
+		else
+			printf("rrb\n"); //rrb(b);
+		op_count--;
+	}
+}
 
 int	sort(t_dlist **a, t_dlist **b)
 {
@@ -219,17 +226,30 @@ int	sort(t_dlist **a, t_dlist **b)
 	{
 		pb(a, b);
 		pb(a, b);
+		ft_dlstput(a, put_content);
+		write(1, "#\n", 2);
+		ft_dlstput(b, put_content);
+		write(1, "___________________\n", 20);
+		rb(b);
+		ft_dlstput(a, put_content);
+		write(1, "#\n", 2);
+		ft_dlstput(b, put_content);
+		write(1, "___________________\n", 20);
 		operations = + 2;
 	}
 	if(!is_sorted(a, b))
 	{
 		update_meta(a, b);
 		calc_costs(a, b);
-		//perform_operations(a, b);
 		ft_dlstput(a, put_content);
 		write(1, "#\n", 2);
 		ft_dlstput(b, put_content);
 		write(1, "___________________\n", 20);
+		//perform_operations(a);
+		//ft_dlstput(a, put_content);
+		//write(1, "#\n", 2);
+		//ft_dlstput(b, put_content);
+		//write(1, "___________________\n", 20);
 		operations++;
 	}
 	return (operations);
