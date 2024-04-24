@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/24 23:50:11 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/24 23:57:30 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,10 @@ void	perform_pa_rotations(t_dlist **a, t_dlist **b)
 	//printf("best pos: %i \n", sm_p_dist_pos);
 	while (sm_p_dist_pos != 0)
 	{
-		ra(a);
+		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
+			rra(a);
+		else
+			ra(a);
 		update_meta(a,b);
 		sm_p_dist_pos = get_sm_p_dist_pos(a);
 	}
@@ -359,8 +362,6 @@ void	shift_bottom_up(t_dlist **a, t_dlist **b)
 		{
 			ra(a);
 			update_meta(a,b);
-			ft_dlstput(a, put_short, ' ');
-			write(1,"\n",1);
 			count--;
 		}
 	}
@@ -371,8 +372,6 @@ void	shift_bottom_up(t_dlist **a, t_dlist **b)
 		{
 			rra(a);
 			update_meta(a,b);
-			ft_dlstput(a, put_short, ' ');
-			write(1,"\n",1);
 			count--;
 		}
 	}
@@ -404,26 +403,26 @@ int	sort(t_dlist **a, t_dlist **b)
 			perform_pb_rotations(a, b);
 			pb(a, b);
 		}
-		write(1, "\n_______PUSHB_______\n", 21);
-		ft_dlstput(a, put_short, ' ');
-		write(1, "\n#\n", 3);
-		ft_dlstput(b, put_short, ' ');
-		write(1, "\n___________________\n", 21);
+		//write(1, "\n_______PUSHB_______\n", 21);
+		//ft_dlstput(a, put_short, ' ');
+		//write(1, "\n#\n", 3);
+		//ft_dlstput(b, put_short, ' ');
+		//write(1, "\n___________________\n", 21);
 		sort_three(a, b);
 		normalize_b(a, b);
-		write(1, "\n_______SORTA_______\n", 21);
-		ft_dlstput(a, put_short, ' ');
-		write(1, "\n#\n", 3);
-		ft_dlstput(b, put_short, ' ');
-		write(1, "\n___________________\n", 21);
+		//write(1, "\n_______SORTA_______\n", 21);
+		//ft_dlstput(a, put_short, ' ');
+		//write(1, "\n#\n", 3);
+		//ft_dlstput(b, put_short, ' ');
+		//write(1, "\n___________________\n", 21);
 		//if (ft_dlstsize((*b)) != 0)
 		while(ft_dlstsize((*b)) != 0)
 		{
 			update_meta(a, b);
-			ft_dlstput(a, put_content, '\n');
-			write(1, "\n#\n", 3);
-			ft_dlstput(b, put_content, '\n');
-			write(1, "\n___________________\n", 21);
+			//ft_dlstput(a, put_content, '\n');
+			//write(1, "\n#\n", 3);
+			//ft_dlstput(b, put_content, '\n');
+			//write(1, "\n___________________\n", 21);
 			perform_pa_rotations(a, b);
 		//write(1, "\n", 1);
 		//ft_dlstput(a, put_short, ' ');
@@ -441,9 +440,9 @@ int	sort(t_dlist **a, t_dlist **b)
 		if(!is_sorted(a, b))
 		{
 			update_meta(a,b);
-			ft_dlstput(a, put_short, ' ');
-			printf("\na max  %i\n", get_pos_max(a));
-			printf("a size %i\n", ft_dlstsize((*a)));
+			//ft_dlstput(a, put_short, ' ');
+			//printf("\na max  %i\n", get_pos_max(a));
+			//printf("a size %i\n", ft_dlstsize((*a)));
 			shift_bottom_up(a, b);
 		}
 	}
@@ -502,11 +501,13 @@ int main(int argc, char **argv)
 		return (0);
 	}
 	ft_putnbr(sort(stack_a, stack_b));
-	write(1, "\n_______END_________\n", 21);
+	//write(1, "\n_______END_________\n", 21);
+	//ft_dlstput(stack_a, put_short, ' ');
+	//write(1, "\n#\n", 3);
+	//ft_dlstput(stack_b, put_short, ' ');
+	//write(1, "\n___________________\n", 21);
+	write(1, "\n", 1);
 	ft_dlstput(stack_a, put_short, ' ');
-	write(1, "\n#\n", 3);
-	ft_dlstput(stack_b, put_short, ' ');
-	write(1, "\n___________________\n", 21);
 	write(1, "\n", 1);
 	return (0);
 }
