@@ -6,11 +6,88 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/24 20:07:52 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/24 23:50:11 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+int	get_pos_min(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		pos_min;
+	int		valbrd;
+	lst = (*stack);
+	pos_min = 0;
+	valbrd = INT_MAX;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->num_data < valbrd)
+		{
+			valbrd = tmp->num_data;
+			pos_min = tmp->position;
+		}
+		lst = lst->next;
+	}
+	return (pos_min);
+}
+
+int	get_pos_max(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		pos_max;
+	int		valbrd;
+	lst = (*stack);
+	pos_max = 0;
+	valbrd = INT_MIN;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->num_data > valbrd)
+		{
+			valbrd = tmp->num_data;
+			pos_max = tmp->position;
+		}
+		lst = lst->next;
+	}
+	return (pos_max);
+}
+
+int	get_sm_p_dist_pos(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		sm_p_dist_pos;
+	int		valbrd;
+	lst = (*stack);
+	sm_p_dist_pos = 0;
+	valbrd = INT_MAX;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->distance < valbrd && tmp->distance > 0)
+		{
+			valbrd = tmp->distance;
+			sm_p_dist_pos = tmp->position;
+		}
+		lst = lst->next;
+	}
+	if(valbrd == INT_MAX)
+		return (0);
+	return (sm_p_dist_pos);
+}
 
 int is_sorted(t_dlist **a, t_dlist **b)
 {
@@ -37,6 +114,7 @@ int is_sorted(t_dlist **a, t_dlist **b)
 		return (1);
 	return (0);
 }
+
 
 void	update_distances(t_dlist **a, t_dlist **b)
 {
@@ -127,25 +205,25 @@ int	calc_b_costs(int ref, t_dlist **b)
 	return (bcost);
 }
 
-void	calc_pb_costs(t_dlist **a, t_dlist **b)
+void	calc_phase_one_costs(t_dlist **a, t_dlist **b)
 {
-	int alen;
+	int len;
 	t_psu	*tmp;
 	t_dlist *lst;
 
 	lst = (*a);
-	alen = ft_dlstsize(lst);
+	len = ft_dlstsize(lst);
 	while (lst != NULL)
 	{
 		tmp = lst->content;
-		if (tmp->position > (alen / 2))
-			tmp->move_cost_a = 0 - (alen - tmp->position);
-		else if (tmp->position < (alen / 2))
+		if (tmp->position > (len / 2))
+			tmp->move_cost_a = 0 - (len - tmp->position);
+		else if (tmp->position < (len / 2))
 			tmp->move_cost_a = tmp->position;
 		else
 		{
-			if (ft_even(alen))
-				tmp->move_cost_a = (alen / 2);
+			if (ft_even(len))
+				tmp->move_cost_a = (len / 2);
 			else
 				tmp->move_cost_a = tmp->position;
 		}
@@ -153,6 +231,19 @@ void	calc_pb_costs(t_dlist **a, t_dlist **b)
 			tmp->move_cost_b = calc_b_costs(tmp->num_data, b);
 		tmp->abs_cost = ft_abs(tmp->move_cost_b) + ft_abs(tmp->move_cost_a);
 		lst = lst->next;
+	}
+}
+
+void	perform_pa_rotations(t_dlist **a, t_dlist **b)
+{
+	update_meta(a, b);
+	int sm_p_dist_pos = get_sm_p_dist_pos(a);
+	//printf("best pos: %i \n", sm_p_dist_pos);
+	while (sm_p_dist_pos != 0)
+	{
+		ra(a);
+		update_meta(a,b);
+		sm_p_dist_pos = get_sm_p_dist_pos(a);
 	}
 }
 
@@ -181,92 +272,48 @@ t_dlist *get_cheapest_node(t_dlist **stack)
 	return (cheapest);
 }
 
+void normalize_b(t_dlist **a, t_dlist **b)
+{
+	int pos_max = get_pos_max(b);
+	update_meta(a, b);
+	while (pos_max != 0)
+	{
+		if (pos_max > (ft_dlstsize((*b)) / 2))
+			rrb(b);
+		else
+			rb(b);
+		update_meta(a,b);
+		pos_max = get_pos_max(b);
+	}
+}
+
+
 void	sort_three(t_dlist **a, t_dlist **b)
 {
-	t_psu	*tmp;
-	t_dlist *lst;
-	int		pos_max;
-	int		valbrd;
-	pos_max = -1;
-	update_meta(a, b);
-	while (pos_max != 2)
-	{
-		lst = (*a);
-		pos_max = 0;
-		valbrd = INT_MIN;
-		while (lst != NULL)
-		{
-			tmp = lst->content;
-			if (tmp->num_data > valbrd)
-			{
-				valbrd = tmp->num_data;
-				pos_max = tmp->position;
-			}
-			lst = lst->next;
-		}
-		if(pos_max != 2)
-		{
-			//printf("%i %i %i\n", pos_max, (ft_dlstsize(*a) - 1), valbrd);
-			ra(a);
-			update_meta(a,b);
-			//ft_dlstput(a, put_short, '\n');
-		}
-	}
-	if(get_content((*a)->content).num_data > get_content((*a)->next->content).num_data)
-		sa(a);
+	 int first, second, third;
+
+    update_meta(a, b);
+    first = get_content((*a)->content).num_data;
+    second = get_content((*a)->next->content).num_data;
+    third = get_content((*a)->next->next->content).num_data;
+
+    if (first > second && second < third && first < third) {
+        sa(a);  // Swap first two if only the first two are out of order
+    } else if (first > second && second > third) {
+        sa(a);  // Scenario: 3, 2, 1
+        rra(a); // Correct order: 1, 2, 3
+    } else if (first > second && second < third && first > third) {
+        ra(a);  // Scenario: 3, 1, 2
+    } else if (first < second && second > third && first < third) {
+        sa(a);  // Scenario: 1, 3, 2
+        ra(a);  // Correct order: 1, 2, 3
+    } else if (first < second && second > third && first > third) {
+        rra(a); // Scenario: 2, 3, 1
+    }
 }
 
-int	get_pos_min(t_dlist **stack)
-{
-	t_psu	*tmp;
-	t_dlist *lst;
-	int		pos_min;
-	int		valbrd;
-	lst = (*stack);
-	pos_min = 0;
-	valbrd = INT_MAX;
 
-	if (stack == NULL || (*stack) == NULL)
-		return (-1);
-	while (lst != NULL)
-	{
-		tmp = lst->content;
-		if (tmp->num_data < valbrd)
-		{
-			valbrd = tmp->num_data;
-			pos_min = tmp->position;
-		}
-		lst = lst->next;
-	}
-	return (pos_min);
-}
-
-int	get_pos_max(t_dlist **stack)
-{
-	t_psu	*tmp;
-	t_dlist *lst;
-	int		pos_max;
-	int		valbrd;
-	lst = (*stack);
-	pos_max = 0;
-	valbrd = INT_MIN;
-
-	if (stack == NULL || (*stack) == NULL)
-		return (-1);
-	while (lst != NULL)
-	{
-		tmp = lst->content;
-		if (tmp->num_data > valbrd)
-		{
-			valbrd = tmp->num_data;
-			pos_max = tmp->position;
-		}
-		lst = lst->next;
-	}
-	return (pos_max);
-}
-
-void	perform_operations(t_dlist **a, t_dlist **b)
+void	perform_pb_rotations(t_dlist **a, t_dlist **b)
 {
 	t_dlist *cheapest;
 	int		direction;
@@ -300,6 +347,37 @@ void	perform_operations(t_dlist **a, t_dlist **b)
 	}
 }
 
+void	shift_bottom_up(t_dlist **a, t_dlist **b)
+{
+	int count;
+
+	update_meta(a,b);
+	if(get_pos_max(a) < (ft_dlstsize((*a) - 1) / 2))
+	{
+		count = get_pos_max(a);
+		while(count > 0)
+		{
+			ra(a);
+			update_meta(a,b);
+			ft_dlstput(a, put_short, ' ');
+			write(1,"\n",1);
+			count--;
+		}
+	}
+	else
+	{
+		count = ((ft_dlstsize((*a)) - 1) - get_pos_max(a));
+		while(count > 0)
+		{
+			rra(a);
+			update_meta(a,b);
+			ft_dlstput(a, put_short, ' ');
+			write(1,"\n",1);
+			count--;
+		}
+	}
+}
+
 int	sort(t_dlist **a, t_dlist **b)
 {
 	int operations;
@@ -322,8 +400,8 @@ int	sort(t_dlist **a, t_dlist **b)
 		while(ft_dlstsize((*a)) > 3)
 		{
 			update_meta(a, b);
-			calc_pb_costs(a, b);
-			perform_operations(a, b);
+			calc_phase_one_costs(a, b);
+			perform_pb_rotations(a, b);
 			pb(a, b);
 		}
 		write(1, "\n_______PUSHB_______\n", 21);
@@ -332,11 +410,42 @@ int	sort(t_dlist **a, t_dlist **b)
 		ft_dlstput(b, put_short, ' ');
 		write(1, "\n___________________\n", 21);
 		sort_three(a, b);
+		normalize_b(a, b);
 		write(1, "\n_______SORTA_______\n", 21);
 		ft_dlstput(a, put_short, ' ');
 		write(1, "\n#\n", 3);
 		ft_dlstput(b, put_short, ' ');
 		write(1, "\n___________________\n", 21);
+		//if (ft_dlstsize((*b)) != 0)
+		while(ft_dlstsize((*b)) != 0)
+		{
+			update_meta(a, b);
+			ft_dlstput(a, put_content, '\n');
+			write(1, "\n#\n", 3);
+			ft_dlstput(b, put_content, '\n');
+			write(1, "\n___________________\n", 21);
+			perform_pa_rotations(a, b);
+		//write(1, "\n", 1);
+		//ft_dlstput(a, put_short, ' ');
+		//write(1, "\n#\n", 3);
+		//ft_dlstput(b, put_short, ' ');
+		//write(1, "\n",1);
+		//	//perform_pa_rotations(a, b);
+			pa(a, b);
+		}
+		//write(1, "\n_______PUSHA_______\n", 21);
+		//ft_dlstput(a, put_short, ' ');
+		//write(1, "\n#\n", 3);
+		//ft_dlstput(b, put_short, ' ');
+		//write(1, "\n___________________\n", 21);
+		if(!is_sorted(a, b))
+		{
+			update_meta(a,b);
+			ft_dlstput(a, put_short, ' ');
+			printf("\na max  %i\n", get_pos_max(a));
+			printf("a size %i\n", ft_dlstsize((*a)));
+			shift_bottom_up(a, b);
+		}
 	}
 	return (operations);
 }
