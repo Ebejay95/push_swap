@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/24 23:57:30 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 00:18:34 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,7 @@ void	calc_phase_one_costs(t_dlist **a, t_dlist **b)
 	}
 }
 
-void	perform_pa_rotations(t_dlist **a, t_dlist **b)
+void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
 {
 	update_meta(a, b);
 	int sm_p_dist_pos = get_sm_p_dist_pos(a);
@@ -242,9 +242,9 @@ void	perform_pa_rotations(t_dlist **a, t_dlist **b)
 	while (sm_p_dist_pos != 0)
 	{
 		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
-			rra(a);
+			*operations = *operations + rra(a);
 		else
-			ra(a);
+			*operations = *operations + ra(a);
 		update_meta(a,b);
 		sm_p_dist_pos = get_sm_p_dist_pos(a);
 	}
@@ -275,48 +275,48 @@ t_dlist *get_cheapest_node(t_dlist **stack)
 	return (cheapest);
 }
 
-void normalize_b(t_dlist **a, t_dlist **b)
+void shift_bottom_down(t_dlist **a, t_dlist **b, int *operations)
 {
 	int pos_max = get_pos_max(b);
 	update_meta(a, b);
 	while (pos_max != 0)
 	{
 		if (pos_max > (ft_dlstsize((*b)) / 2))
-			rrb(b);
+			*operations = *operations + rrb(b);
 		else
-			rb(b);
+			*operations = *operations + rb(b);
 		update_meta(a,b);
 		pos_max = get_pos_max(b);
 	}
 }
 
 
-void	sort_three(t_dlist **a, t_dlist **b)
+void	sort_three(t_dlist **a, t_dlist **b, int *operations)
 {
-	 int first, second, third;
+	int first, second, third;
+	///TODO - rewrite//////////!!!!!!!!!!!!!!
+	update_meta(a, b);
+	first = get_content((*a)->content).num_data;
+	second = get_content((*a)->next->content).num_data;
+	third = get_content((*a)->next->next->content).num_data;
 
-    update_meta(a, b);
-    first = get_content((*a)->content).num_data;
-    second = get_content((*a)->next->content).num_data;
-    third = get_content((*a)->next->next->content).num_data;
-
-    if (first > second && second < third && first < third) {
-        sa(a);  // Swap first two if only the first two are out of order
-    } else if (first > second && second > third) {
-        sa(a);  // Scenario: 3, 2, 1
-        rra(a); // Correct order: 1, 2, 3
-    } else if (first > second && second < third && first > third) {
-        ra(a);  // Scenario: 3, 1, 2
-    } else if (first < second && second > third && first < third) {
-        sa(a);  // Scenario: 1, 3, 2
-        ra(a);  // Correct order: 1, 2, 3
-    } else if (first < second && second > third && first > third) {
-        rra(a); // Scenario: 2, 3, 1
-    }
+	if (first > second && second < third && first < third) {
+		*operations = *operations + sa(a);
+	} else if (first > second && second > third) {
+		*operations = *operations + sa(a);
+		*operations = *operations + rra(a);
+	} else if (first > second && second < third && first > third) {
+		*operations = *operations + ra(a);
+	} else if (first < second && second > third && first < third) {
+		*operations = *operations + sa(a);
+		*operations = *operations + ra(a);
+	} else if (first < second && second > third && first > third) {
+		*operations = *operations + rra(a);
+	}
 }
 
 
-void	perform_pb_rotations(t_dlist **a, t_dlist **b)
+void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
 {
 	t_dlist *cheapest;
 	int		direction;
@@ -331,9 +331,9 @@ void	perform_pb_rotations(t_dlist **a, t_dlist **b)
 	while (op_count > 0)
 	{
 		if(direction)
-			ra(a);
+			*operations = *operations + ra(a);
 		else
-			rra(a);
+			*operations = *operations + rra(a);
 		op_count--;
 	}
 	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
@@ -343,14 +343,14 @@ void	perform_pb_rotations(t_dlist **a, t_dlist **b)
 	while (op_count > 0)
 	{
 		if(direction)
-			rb(b);
+			*operations = *operations + rb(b);
 		else
-			rrb(b);
+			*operations = *operations + rrb(b);
 		op_count--;
 	}
 }
 
-void	shift_bottom_up(t_dlist **a, t_dlist **b)
+void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
 {
 	int count;
 
@@ -360,7 +360,7 @@ void	shift_bottom_up(t_dlist **a, t_dlist **b)
 		count = get_pos_max(a);
 		while(count > 0)
 		{
-			ra(a);
+			*operations = *operations + ra(a);
 			update_meta(a,b);
 			count--;
 		}
@@ -370,7 +370,7 @@ void	shift_bottom_up(t_dlist **a, t_dlist **b)
 		count = ((ft_dlstsize((*a)) - 1) - get_pos_max(a));
 		while(count > 0)
 		{
-			rra(a);
+			*operations = *operations + rra(a);
 			update_meta(a,b);
 			count--;
 		}
@@ -387,29 +387,30 @@ int	sort(t_dlist **a, t_dlist **b)
 	{
 		update_meta(a, b);
 		if(get_content((*a)->content).num_data > get_content((*a)->next->content).num_data)
-			sa(a);
-	} else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 3)
+			operations = operations + sa(a);
+	}
+	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 3)
 	{
-		sort_three(a, b);
+		sort_three(a, b, &operations);
 	}
 	else if (!is_sorted(a, b))
 	{
 		while(ft_dlstsize((*a)) > 3 && ft_dlstsize((*b)) < 2)
-			pb(a, b);
+			operations = operations + pb(a, b);
 		while(ft_dlstsize((*a)) > 3)
 		{
 			update_meta(a, b);
 			calc_phase_one_costs(a, b);
-			perform_pb_rotations(a, b);
-			pb(a, b);
+			perform_pb_rotations(a, b, &operations);
+			operations = operations + pb(a, b);
 		}
 		//write(1, "\n_______PUSHB_______\n", 21);
 		//ft_dlstput(a, put_short, ' ');
 		//write(1, "\n#\n", 3);
 		//ft_dlstput(b, put_short, ' ');
 		//write(1, "\n___________________\n", 21);
-		sort_three(a, b);
-		normalize_b(a, b);
+		sort_three(a, b, &operations);
+		shift_bottom_down(a, b, &operations);
 		//write(1, "\n_______SORTA_______\n", 21);
 		//ft_dlstput(a, put_short, ' ');
 		//write(1, "\n#\n", 3);
@@ -423,14 +424,14 @@ int	sort(t_dlist **a, t_dlist **b)
 			//write(1, "\n#\n", 3);
 			//ft_dlstput(b, put_content, '\n');
 			//write(1, "\n___________________\n", 21);
-			perform_pa_rotations(a, b);
+			perform_pa_rotations(a, b, &operations);
 		//write(1, "\n", 1);
 		//ft_dlstput(a, put_short, ' ');
 		//write(1, "\n#\n", 3);
 		//ft_dlstput(b, put_short, ' ');
 		//write(1, "\n",1);
 		//	//perform_pa_rotations(a, b);
-			pa(a, b);
+			operations = operations + pa(a, b);
 		}
 		//write(1, "\n_______PUSHA_______\n", 21);
 		//ft_dlstput(a, put_short, ' ');
@@ -443,7 +444,7 @@ int	sort(t_dlist **a, t_dlist **b)
 			//ft_dlstput(a, put_short, ' ');
 			//printf("\na max  %i\n", get_pos_max(a));
 			//printf("a size %i\n", ft_dlstsize((*a)));
-			shift_bottom_up(a, b);
+			shift_bottom_up(a, b, &operations);
 		}
 	}
 	return (operations);
