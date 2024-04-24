@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:25:56 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/19 15:47:47 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/24 16:23:43 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,43 +106,43 @@ void	pb(t_dlist **a, t_dlist **b)
 // ra (rotate a): Shift up all elements of stack a by 1.
 void	ra(t_dlist **a)
 {
-	ft_dlstrotate(a, 1, 0);
+	ft_dlstrotate(a, 1, 1);
 	ft_putstr("ra\n");
 }
 
 // rb (rotate b): Shift up all elements of stack b by 1.
 void	rb(t_dlist **b)
 {
-	ft_dlstrotate(b, 1, 0);
+	ft_dlstrotate(b, 1, 1);
 	ft_putstr("rb\n");
 }
 
 // rr : ra and rb at the same time.
 void	rr(t_dlist **a, t_dlist **b)
 {
-	ft_dlstrotate(a, 1, 0);
-	ft_dlstrotate(b, 1, 0);
+	ft_dlstrotate(a, 1, 1);
+	ft_dlstrotate(b, 1, 1);
 	ft_putstr("rr\n");
 }
 
 // ra (rotate a): Shift up all elements of stack a by 1.
 void	rra(t_dlist **a)
 {
-	ft_dlstrotate(a, 1, 1);
+	ft_dlstrotate(a, 1, 0);
 	ft_putstr("rra\n");
 }
 
 // rb (rotate b): Shift up all elements of stack b by 1.
 void	rrb(t_dlist **b)
 {
-	ft_dlstrotate(b, 1, 1);
+	ft_dlstrotate(b, 1, 0);
 	ft_putstr("rrb\n");
 }
 
 // rrr : ra and rb at the same time.
 void	rrr(t_dlist **a, t_dlist **b)
 {
-	ft_dlstrotate(a, 1, 1);
-	ft_dlstrotate(b, 1, 1);
+	ft_dlstrotate(a, 1, 0);
+	ft_dlstrotate(b, 1, 0);
 	ft_putstr("rrr\n");
 }

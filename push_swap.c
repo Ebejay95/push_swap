@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/19 15:53:39 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/24 20:07:52 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,16 @@ void	update_meta(t_dlist **a, t_dlist **b)
 		lst = lst->next;
 	}
 	position = 0;
-	update_distances(a,b);
-	while ((*b) != NULL)
+	lst = (*b);
+	while (lst != NULL)
 	{
-		tmp = (*b)->content;
+		tmp = lst->content;
 		tmp->position = position;
 		position++;
-		b = &((*b)->next);
+		lst = lst->next;
 	}
+	if((*a) != NULL && (*b) != NULL)
+		update_distances(a,b);
 }
 
 int	get_b_effective_pos(int ref, t_dlist **b)
@@ -105,7 +107,7 @@ int	get_b_effective_pos(int ref, t_dlist **b)
 		position++;
 	}
 	if(INT_MIN == valbrd)
-		return (ft_dlstsize(*b) - 1);
+		return 0;
 	return (pos_max);
 }
 
@@ -113,16 +115,19 @@ int	calc_b_costs(int ref, t_dlist **b)
 {
 	int len;
 	int position;
-
+	int bcost;
+	bcost = 0;
 	len = ft_dlstsize((*b));
 	position = get_b_effective_pos(ref, b);
-	if (position > (len - position))
-		return ((len - position) * (-1));
-	else 
-		return (position);
+	if (position > (len - position) && (position != 0))
+		bcost = (len - position) * (-1);
+	else
+		bcost = position;
+	//printf("ref: %i %i %i\n", ref, position, bcost);
+	return (bcost);
 }
 
-void	calc_costs(t_dlist **a, t_dlist **b)
+void	calc_pb_costs(t_dlist **a, t_dlist **b)
 {
 	int alen;
 	t_psu	*tmp;
@@ -151,7 +156,7 @@ void	calc_costs(t_dlist **a, t_dlist **b)
 	}
 }
 
-t_dlist *get_cheapest_node(t_dlist **a)
+t_dlist *get_cheapest_node(t_dlist **stack)
 {
 	t_psu tmp;
 	t_dlist *current;
@@ -160,58 +165,137 @@ t_dlist *get_cheapest_node(t_dlist **a)
 
 	cheapest = NULL;
 	costref = INT_MAX;
-	current = (*a);
+	current = (*stack);
 	while (current != NULL)
 	{
 		tmp = get_content(current->content);
-		if(tmp.abs_cost <= costref)
+
+		//if(cheapest == NULL || ((tmp.abs_cost < costref) || (((tmp.abs_cost == costref) &&ft_abs(tmp.distance) < ft_abs(get_content(cheapest->content).distance)))))
+		if(cheapest == NULL || (tmp.abs_cost < costref))
 		{
-			costref = tmp.abs_cost;
-			if(cheapest && get_content(cheapest->content).distance > 0)
-			{
-				if(get_content(cheapest->content).distance > tmp.distance)
-					cheapest = current;
-			}
-			else
-				cheapest = current;
+		    costref = tmp.abs_cost;
+		    cheapest = current;
 		}
 		current = current->next;
 	}
 	return (cheapest);
 }
 
+void	sort_three(t_dlist **a, t_dlist **b)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		pos_max;
+	int		valbrd;
+	pos_max = -1;
+	update_meta(a, b);
+	while (pos_max != 2)
+	{
+		lst = (*a);
+		pos_max = 0;
+		valbrd = INT_MIN;
+		while (lst != NULL)
+		{
+			tmp = lst->content;
+			if (tmp->num_data > valbrd)
+			{
+				valbrd = tmp->num_data;
+				pos_max = tmp->position;
+			}
+			lst = lst->next;
+		}
+		if(pos_max != 2)
+		{
+			//printf("%i %i %i\n", pos_max, (ft_dlstsize(*a) - 1), valbrd);
+			ra(a);
+			update_meta(a,b);
+			//ft_dlstput(a, put_short, '\n');
+		}
+	}
+	if(get_content((*a)->content).num_data > get_content((*a)->next->content).num_data)
+		sa(a);
+}
 
-//void	perform_operations(t_dlist **a, t_dlist **b)
-void	perform_operations(t_dlist **a)
+int	get_pos_min(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		pos_min;
+	int		valbrd;
+	lst = (*stack);
+	pos_min = 0;
+	valbrd = INT_MAX;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->num_data < valbrd)
+		{
+			valbrd = tmp->num_data;
+			pos_min = tmp->position;
+		}
+		lst = lst->next;
+	}
+	return (pos_min);
+}
+
+int	get_pos_max(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		pos_max;
+	int		valbrd;
+	lst = (*stack);
+	pos_max = 0;
+	valbrd = INT_MIN;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->num_data > valbrd)
+		{
+			valbrd = tmp->num_data;
+			pos_max = tmp->position;
+		}
+		lst = lst->next;
+	}
+	return (pos_max);
+}
+
+void	perform_operations(t_dlist **a, t_dlist **b)
 {
 	t_dlist *cheapest;
 	int		direction;
 	int		op_count;
 
 	cheapest = get_cheapest_node(a);
-	printf("CHEAP: %i\n", get_content(cheapest->content).num_data);
+	//printf("CHEAP: %i\n", get_content(cheapest->content).num_data);
 	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
 	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
-	printf("ROT A: %i\n", op_count);
-	printf("DIR A: %i\n", direction);
+	//printf("ROT A: %i\n", op_count);
+	//printf("DIR A: %i\n", direction);
 	while (op_count > 0)
 	{
 		if(direction)
-			printf("ra\n"); //rb(b);
+			ra(a);
 		else
-			printf("rra\n"); //rrb(b);
+			rra(a);
 		op_count--;
 	}
 	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
 	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
-	printf("ROT B: %i\n", op_count);
-	printf("DIR B: %i\n", direction);
+	//printf("ROT B: %i\n", op_count);
+	//printf("DIR B: %i\n", direction);
 	while (op_count > 0)
 	{
 		if(direction)
-			printf("rb\n"); //rb(b);
+			rb(b);
 		else
-			printf("rrb\n"); //rrb(b);
+			rrb(b);
 		op_count--;
 	}
 }
@@ -222,35 +306,37 @@ int	sort(t_dlist **a, t_dlist **b)
 
 	operations = 0;
 
-	if(!is_sorted(a, b))
-	{
-		pb(a, b);
-		pb(a, b);
-		ft_dlstput(a, put_content);
-		write(1, "#\n", 2);
-		ft_dlstput(b, put_content);
-		write(1, "___________________\n", 20);
-		rb(b);
-		ft_dlstput(a, put_content);
-		write(1, "#\n", 2);
-		ft_dlstput(b, put_content);
-		write(1, "___________________\n", 20);
-		operations = + 2;
-	}
-	if(!is_sorted(a, b))
+	if(!is_sorted(a, b) && ft_dlstsize((*a)) == 2)
 	{
 		update_meta(a, b);
-		calc_costs(a, b);
-		ft_dlstput(a, put_content);
-		write(1, "#\n", 2);
-		ft_dlstput(b, put_content);
-		write(1, "___________________\n", 20);
-		//perform_operations(a);
-		//ft_dlstput(a, put_content);
-		//write(1, "#\n", 2);
-		//ft_dlstput(b, put_content);
-		//write(1, "___________________\n", 20);
-		operations++;
+		if(get_content((*a)->content).num_data > get_content((*a)->next->content).num_data)
+			sa(a);
+	} else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 3)
+	{
+		sort_three(a, b);
+	}
+	else if (!is_sorted(a, b))
+	{
+		while(ft_dlstsize((*a)) > 3 && ft_dlstsize((*b)) < 2)
+			pb(a, b);
+		while(ft_dlstsize((*a)) > 3)
+		{
+			update_meta(a, b);
+			calc_pb_costs(a, b);
+			perform_operations(a, b);
+			pb(a, b);
+		}
+		write(1, "\n_______PUSHB_______\n", 21);
+		ft_dlstput(a, put_short, ' ');
+		write(1, "\n#\n", 3);
+		ft_dlstput(b, put_short, ' ');
+		write(1, "\n___________________\n", 21);
+		sort_three(a, b);
+		write(1, "\n_______SORTA_______\n", 21);
+		ft_dlstput(a, put_short, ' ');
+		write(1, "\n#\n", 3);
+		ft_dlstput(b, put_short, ' ');
+		write(1, "\n___________________\n", 21);
 	}
 	return (operations);
 }
@@ -262,7 +348,6 @@ int validate_arg(char *arg)
 	i = 0;
 	if (*arg == 43 || *arg == 45)
 	{
-		printf("waspre\n");
 		i++;
 	}
 	if(ft_isdigit(arg[i]))
@@ -308,6 +393,11 @@ int main(int argc, char **argv)
 		return (0);
 	}
 	ft_putnbr(sort(stack_a, stack_b));
+	write(1, "\n_______END_________\n", 21);
+	ft_dlstput(stack_a, put_short, ' ');
+	write(1, "\n#\n", 3);
+	ft_dlstput(stack_b, put_short, ' ');
+	write(1, "\n___________________\n", 21);
 	write(1, "\n", 1);
 	return (0);
 }

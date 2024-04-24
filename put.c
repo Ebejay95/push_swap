@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 21:54:05 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/19 13:47:14 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/24 19:47:29 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ void put_content(void *n)
 	toput = (t_psu *)n;
 	write (1, "num_data: ", 10);
 	ft_putnbr(toput->num_data);
+	write (1, " pos: ", 6);
+	ft_putnbr(toput->position);
 	write (1, " cost: ", 7);
 	ft_putnbr(toput->move_cost_a);
 	write (1, " ", 1);
@@ -48,6 +50,27 @@ void put_content(void *n)
 	ft_putnbr(toput->abs_cost);
 	write (1, " dist: ", 7);
 	ft_putnbr(toput->distance);
+	//write (1, "num_data: ", 10);
+	//ft_putnbr(toput->num_data);
+	//write (1, "\nmove_cost_a: ", 14);
+	//ft_putnbr(toput->move_cost_a);
+	//write (1, "\nmove_cost_b: ", 14);
+	//ft_putnbr(toput->move_cost_b);
+	//write (1, "\nposition: ", 11);
+	//ft_putnbr(toput->position);
+	//write (1, "\nabs_cost: ", 19);
+	//ft_putnbr(toput->abs_cost);
+	//write (1, "\n", 1);
+}
+
+void put_short(void *n)
+{
+	t_psu *toput;
+
+	if(!n)
+		return ;
+	toput = (t_psu *)n;
+	ft_putnbr(toput->num_data);
 	//write (1, "num_data: ", 10);
 	//ft_putnbr(toput->num_data);
 	//write (1, "\nmove_cost_a: ", 14);
