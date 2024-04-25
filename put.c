@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 21:54:05 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 02:13:32 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 17:56:07 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void *set_content(int n)
 	p->position = 0;
 	p->distance = 0;
 	p->abs_cost = 0;
+	p->index = -1;
 	return (p);
 }
 
@@ -50,6 +51,8 @@ void put_content(void *n)
 	ft_putnbr(toput->abs_cost);
 	write (1, " dist: ", 7);
 	ft_putnbr(toput->distance);
+	write (1, " ndx: ", 7);
+	ft_putnbr(toput->index);
 }
 
 void put_short(void *n)

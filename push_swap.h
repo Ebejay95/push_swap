@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/25 00:16:31 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 17:33:15 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_psu
 	int position;
 	int distance;
 	int abs_cost;
+	int index;
 } t_psu;
 
 void	put_content(void *n);

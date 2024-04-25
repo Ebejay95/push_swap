@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 14:09:06 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 17:18:23 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -395,49 +395,49 @@ void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
 	}
 }
 
-void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
-{
-	update_meta(a, b);
-	int sm_p_dist_pos = get_sm_p_dist_pos(a);
-	while (sm_p_dist_pos != 0)
-	{
-		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
-			*operations = *operations + rra(a);
-		else
-			*operations = *operations + ra(a);
-		update_meta(a,b);
-		sm_p_dist_pos = get_sm_p_dist_pos(a);
-	}
-}
-
 //void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
 //{
-//	t_dlist *cheapest;
-//	int		direction;
-//	int		op_count;
-//
-//	cheapest = get_cheapest_node(a);
-//	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
-//	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
-//	while (op_count > 0)
+//	update_meta(a, b);
+//	int sm_p_dist_pos = get_sm_p_dist_pos(a);
+//	while (sm_p_dist_pos != 0)
 //	{
-//		if(direction)
-//			*operations = *operations + ra(a);
-//		else
+//		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
 //			*operations = *operations + rra(a);
-//		op_count--;
-//	}
-//	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
-//	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
-//	while (op_count > 0)
-//	{
-//		if(direction)
-//			*operations = *operations + rb(b);
 //		else
-//			*operations = *operations + rrb(b);
-//		op_count--;
+//			*operations = *operations + ra(a);
+//		update_meta(a,b);
+//		sm_p_dist_pos = get_sm_p_dist_pos(a);
 //	}
 //}
+
+void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
+{
+	t_dlist *cheapest;
+	int		direction;
+	int		op_count;
+
+	cheapest = get_cheapest_node(a);
+	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
+	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
+	while (op_count > 0)
+	{
+		if(direction)
+			*operations = *operations + ra(a);
+		else
+			*operations = *operations + rra(a);
+		op_count--;
+	}
+	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
+	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
+	while (op_count > 0)
+	{
+		if(direction)
+			*operations = *operations + rb(b);
+		else
+			*operations = *operations + rrb(b);
+		op_count--;
+	}
+}
 
 void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
 {
@@ -490,28 +490,25 @@ int	sort(t_dlist **a, t_dlist **b)
 		{
 			update_meta(a, b);
 			calc_phase_one_costs(a, b);
-	//ft_dlstput(a, put_content, '\n');
-	//write(1, "\n", 1);
-	//ft_dlstput(b, put_content, '\n');
-	//write(1, "\n", 1);
+			ft_dlstput(a, put_content, '\n');
+			write(1, "\n", 1);
+			ft_dlstput(b, put_content, '\n');
+			write(1, "\n", 1);
 			perform_pb_rotations(a, b, &operations);
 			operations = operations + pb(a, b);
 		}
 		sort_three(a, b, &operations);
 		clear_costs(a, b);
-	//ft_dlstput(a, put_content, '\n');
-	//write(1, "\n", 1);
-	//ft_dlstput(b, put_content, '\n');
-	//write(1, "\n", 1);
-		shift_bottom_down(a, b, &operations);
+		ft_putstr("clear_costs\n");
+		//shift_bottom_down(a, b, &operations);
 		while(ft_dlstsize((*b)) != 0)
 		{
-			update_meta(a, b);
-			//calc_phase_two_costs(a, b);
-	//ft_dlstput(a, put_content, '\n');
-	//write(1, "\n", 1);
-	//ft_dlstput(b, put_content, '\n');
-	//write(1, "\n", 1);
+			update_meta(b, a);
+			calc_phase_two_costs(a, b);
+			ft_dlstput(a, put_content, '\n');
+			write(1, "\n", 1);
+			ft_dlstput(b, put_content, '\n');
+			write(1, "\n", 1);
 			perform_pa_rotations(a, b, &operations);
 			operations = operations + pa(a, b);
 		}
@@ -595,8 +592,8 @@ int main(int argc, char **argv)
 		return (0);
 	}
 	sort(stack_a, stack_b);
-	//write(1, "\n", 1);
-	//ft_dlstput(stack_a, put_short, ' ');
-	//write(1, "\n", 1);
+	write(1, "\n", 1);
+	ft_dlstput(stack_a, put_short, ' ');
+	write(1, "\n", 1);
 	return (0);
 }

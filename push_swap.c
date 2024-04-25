@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 15:49:47 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 18:03:18 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,27 @@ int	get_sm_p_dist_pos(t_dlist **stack)
 	return (sm_p_dist_pos);
 }
 
+int is_revsinglesorted(t_dlist **a)
+{
+	t_dlist	*current;
+	t_psu cur;
+	t_psu cmp;
+
+	current = (*a);
+	while (current != NULL)
+	{
+		if(current->prev != NULL)
+		{
+			cur = get_content(current->content);
+			cmp = get_content(current->prev->content);
+			if(cur.num_data < cmp.num_data)
+				return (0);
+		}
+		current = current->next; 
+	}
+	return (1);
+}
+
 int is_sorted(t_dlist **a, t_dlist **b)
 {
 	int i;
@@ -173,6 +194,39 @@ void	update_distances(t_dlist **a, t_dlist **b)
 			tmpa = (*a)->content;
 			tmpa->distance = tmpa->num_data - tmpb->num_data;
 			a = &((*a)->next);
+		}
+	}
+}
+
+void	setindexes(t_dlist **a)
+{
+	int index = 0;
+	t_psu	*tmp;
+	t_psu	*smallestitem;
+	t_dlist *lst;
+	t_dlist *smallest;
+	int smallestval = 0;
+
+	while (index < (ft_dlstsize((*a))))
+	{
+		smallest = NULL;
+		smallestval = INT_MAX;
+		lst = (*a);
+		while (lst != NULL)
+		{
+			tmp = lst->content;
+			if(tmp->index == -1 && tmp->num_data < smallestval)
+			{
+				smallestval = tmp->num_data;
+				smallest = lst;
+			}
+			lst = lst->next;
+		}
+		if(smallest != NULL)
+		{
+			smallestitem = smallest->content;
+			smallestitem->index = index;
+			index++;
 		}
 	}
 }
@@ -510,10 +564,6 @@ void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
 	}
 }
 
-void	sort_remain(t_dlist **a)
-{
-	
-}
 
 int	sort(t_dlist **a, t_dlist **b)
 {
@@ -524,6 +574,7 @@ int	sort(t_dlist **a, t_dlist **b)
 	operations = 0;
 	lower_sep = get_min(a) + ((get_max(a) - get_min(a)) / 3);
 	upper_sep = get_min(a) + (2 * ((get_max(a) - get_min(a)) / 3));
+	setindexes(a);
 	if(!is_sorted(a, b) && ft_dlstsize((*a)) == 2)
 	{
 		update_meta(a, b);
@@ -536,6 +587,10 @@ int	sort(t_dlist **a, t_dlist **b)
 	}
 	else if (!is_sorted(a, b))
 	{
+		ft_dlstput(a, put_content, '\n');
+		write(1, "\n", 1);
+		ft_dlstput(b, put_content, '\n');
+		write(1, "\n", 1);
 		//printf("seps: %i %i\n", lower_sep, upper_sep);
 		while (get_max(a) > upper_sep)
 		{
@@ -553,11 +608,19 @@ int	sort(t_dlist **a, t_dlist **b)
 			else
 				operations = operations + ra(a);
 		}
-		sort_remain(a);
-		ft_dlstput(a, put_short, ' ');
-		write(1, "\n", 1);
-		ft_dlstput(b, put_short, ' ');
-		write(1, "\n", 1);
+		while(ft_dlstsize((*a)) > 3)
+		{
+			update_meta(a, b);
+			calc_phase_one_costs(a, b);
+	//ft_dlstput(a, put_content, '\n');
+	//write(1, "\n", 1);
+	//ft_dlstput(b, put_content, '\n');
+	//write(1, "\n", 1);
+			perform_pb_rotations(a, b, &operations);
+			operations = operations + pb(a, b);
+		}
+		sort_three(a, b, &operations);
+
 	}
 	return (operations);
 }
@@ -633,8 +696,8 @@ int main(int argc, char **argv)
 		return (0);
 	}
 	sort(stack_a, stack_b);
-	//write(1, "\n", 1);
-	//ft_dlstput(stack_a, put_short, ' ');
-	//write(1, "\n", 1);
+	write(1, "\n", 1);
+	ft_dlstput(stack_a, put_short, ' ');
+	write(1, "\n", 1);
 	return (0);
 }
