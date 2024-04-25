@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 04:35:37 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 14:09:06 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,29 +353,45 @@ void	sort_three(t_dlist **a, t_dlist **b, int *operations)
 void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
 {
 	t_dlist *cheapest;
-	int		direction;
-	int		op_count;
+	int		adirection;
+	int		aop_count;
+	int		bdirection;
+	int		bop_count;
+	int		minopcount;
 
 	cheapest = get_cheapest_node(a);
-	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
-	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
-	while (op_count > 0)
+	aop_count = ft_abs(get_content(cheapest->content).move_cost_a);
+	adirection = ft_ispos(get_content(cheapest->content).move_cost_a);
+	bop_count = ft_abs(get_content(cheapest->content).move_cost_b);
+	bdirection = ft_ispos(get_content(cheapest->content).move_cost_b);
+
+	minopcount = (aop_count < bop_count) ? aop_count : bop_count;
+
+	while (minopcount > 0 && adirection == bdirection)
 	{
-		if(direction)
+		if (adirection)
+			*operations = *operations + rr(a, b);
+		else
+			*operations = *operations + rrr(a, b);
+		minopcount--;
+		aop_count--;
+		bop_count--;
+	}
+	while (aop_count > 0)
+	{
+		if(adirection)
 			*operations = *operations + ra(a);
 		else
 			*operations = *operations + rra(a);
-		op_count--;
+		aop_count--;
 	}
-	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
-	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
-	while (op_count > 0)
+	while (bop_count > 0)
 	{
-		if(direction)
+		if(bdirection)
 			*operations = *operations + rb(b);
 		else
 			*operations = *operations + rrb(b);
-		op_count--;
+		bop_count--;
 	}
 }
 
@@ -522,17 +538,36 @@ int validate_arg(char *arg)
 	return (1);
 }
 
+void	handle_string_input(t_dlist **stack_a, char *str, int *e)
+{
+	size_t i = 0;
+	size_t	count = ft_count_words(str, ' ');
+	char	**words = ft_split(str, ' ');
+	while (i < count)
+	{
+		if(validate_arg(words[i]) != 0)
+			(*e)++;
+		ft_dlstadd_back(stack_a, ft_dlstnew(set_content(ft_atoi(words[i]))));
+		i++;
+	}
+}
+
 void	fill_initial(t_dlist **stack_a, int argc, char **argv, int *e)
 {
 	int		i;
 
 	i = 1;
-	while (i < argc)
+	if (argc == 2)
+		handle_string_input(stack_a, argv[1], e);
+	else
 	{
-		if(validate_arg(argv[i]) != 0)
-			(*e)++;
-		ft_dlstadd_back(stack_a, ft_dlstnew(set_content(ft_atoi(argv[i]))));
-		i++;
+		while (i < argc)
+		{
+			if(validate_arg(argv[i]) != 0)
+				(*e)++;
+			ft_dlstadd_back(stack_a, ft_dlstnew(set_content(ft_atoi(argv[i]))));
+			i++;
+		}
 	}
 }
 
