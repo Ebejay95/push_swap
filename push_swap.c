@@ -6,11 +6,55 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 14:09:06 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 15:49:47 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+int	get_min(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		valbrd;
+	lst = (*stack);
+	valbrd = INT_MAX;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->num_data < valbrd)
+		{
+			valbrd = tmp->num_data;
+		}
+		lst = lst->next;
+	}
+	return (valbrd);
+}
+
+int	get_max(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		valbrd;
+	lst = (*stack);
+	valbrd = INT_MIN;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->num_data > valbrd)
+		{
+			valbrd = tmp->num_data;
+		}
+		lst = lst->next;
+	}
+	return (valbrd);
+}
 
 int	get_pos_min(t_dlist **stack)
 {
@@ -466,12 +510,20 @@ void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
 	}
 }
 
+void	sort_remain(t_dlist **a)
+{
+	
+}
+
 int	sort(t_dlist **a, t_dlist **b)
 {
 	int operations;
+	int upper_sep;
+	int lower_sep;
 
 	operations = 0;
-
+	lower_sep = get_min(a) + ((get_max(a) - get_min(a)) / 3);
+	upper_sep = get_min(a) + (2 * ((get_max(a) - get_min(a)) / 3));
 	if(!is_sorted(a, b) && ft_dlstsize((*a)) == 2)
 	{
 		update_meta(a, b);
@@ -484,42 +536,28 @@ int	sort(t_dlist **a, t_dlist **b)
 	}
 	else if (!is_sorted(a, b))
 	{
-		while(ft_dlstsize((*a)) > 3 && ft_dlstsize((*b)) < 2)
-			operations = operations + pb(a, b);
-		while(ft_dlstsize((*a)) > 3)
+		//printf("seps: %i %i\n", lower_sep, upper_sep);
+		while (get_max(a) > upper_sep)
 		{
-			update_meta(a, b);
-			calc_phase_one_costs(a, b);
-	//ft_dlstput(a, put_content, '\n');
-	//write(1, "\n", 1);
-	//ft_dlstput(b, put_content, '\n');
-	//write(1, "\n", 1);
-			perform_pb_rotations(a, b, &operations);
-			operations = operations + pb(a, b);
+			//printf("cur: %i max: %i\n", get_content((*a)->content).num_data, get_max(a));
+			if(get_content((*a)->content).num_data > upper_sep)
+				operations = operations + pb(a, b);
+			else
+				operations = operations + ra(a);
 		}
-		sort_three(a, b, &operations);
-		clear_costs(a, b);
-	//ft_dlstput(a, put_content, '\n');
-	//write(1, "\n", 1);
-	//ft_dlstput(b, put_content, '\n');
-	//write(1, "\n", 1);
-		shift_bottom_down(a, b, &operations);
-		while(ft_dlstsize((*b)) != 0)
+		while (get_max(a) > lower_sep)
 		{
-			update_meta(a, b);
-			//calc_phase_two_costs(a, b);
-	//ft_dlstput(a, put_content, '\n');
-	//write(1, "\n", 1);
-	//ft_dlstput(b, put_content, '\n');
-	//write(1, "\n", 1);
-			perform_pa_rotations(a, b, &operations);
-			operations = operations + pa(a, b);
+			//printf("cur: %i max: %i\n", get_content((*a)->content).num_data, get_max(a));
+			if(get_content((*a)->content).num_data <= upper_sep && get_content((*a)->content).num_data >= lower_sep)
+				operations = operations + pb(a, b);
+			else
+				operations = operations + ra(a);
 		}
-		if(!is_sorted(a, b))
-		{
-			update_meta(a,b);
-			shift_bottom_up(a, b, &operations);
-		}
+		sort_remain(a);
+		ft_dlstput(a, put_short, ' ');
+		write(1, "\n", 1);
+		ft_dlstput(b, put_short, ' ');
+		write(1, "\n", 1);
 	}
 	return (operations);
 }

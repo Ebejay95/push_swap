@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   push_swap copy.c                                   :+:      :+:    :+:   */
+/*   push_swap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 02:37:14 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/25 14:09:06 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,31 @@ void	update_meta(t_dlist **a, t_dlist **b)
 		update_distances(a,b);
 }
 
+void	clear_costs(t_dlist **a, t_dlist **b)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+
+	lst = (*a);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		tmp->move_cost_a = 0;
+		tmp->move_cost_b = 0;
+		tmp->abs_cost = 0;
+		lst = lst->next;
+	}
+	lst = (*b);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		tmp->move_cost_a = 0;
+		tmp->move_cost_b = 0;
+		tmp->abs_cost = 0;
+		lst = lst->next;
+	}
+}
+
 int	get_b_effective_pos(int ref, t_dlist **b)
 {
 	t_psu	*tmp;
@@ -232,19 +257,32 @@ void	calc_phase_one_costs(t_dlist **a, t_dlist **b)
 		lst = lst->next;
 	}
 }
-
-void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
+void	calc_phase_two_costs(t_dlist **a, t_dlist **b)
 {
-	update_meta(a, b);
-	int sm_p_dist_pos = get_sm_p_dist_pos(a);
-	while (sm_p_dist_pos != 0)
+	int len;
+	t_psu	*tmp;
+	t_dlist *lst;
+
+	lst = (*b);
+	len = ft_dlstsize(lst);
+	while (lst != NULL)
 	{
-		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
-			*operations = *operations + rra(a);
+		tmp = lst->content;
+		if (tmp->position > (len / 2))
+			tmp->move_cost_b = 0 - (len - tmp->position);
+		else if (tmp->position < (len / 2))
+			tmp->move_cost_b = tmp->position;
 		else
-			*operations = *operations + ra(a);
-		update_meta(a,b);
-		sm_p_dist_pos = get_sm_p_dist_pos(a);
+		{
+			if (ft_even(len))
+				tmp->move_cost_b = (len / 2);
+			else
+				tmp->move_cost_b = tmp->position;
+		}
+		if(b != NULL)
+			tmp->move_cost_a = calc_b_costs(tmp->num_data, a);
+		tmp->abs_cost = ft_abs(tmp->move_cost_a) + ft_abs(tmp->move_cost_b);
+		lst = lst->next;
 	}
 }
 
@@ -261,9 +299,7 @@ t_dlist *get_cheapest_node(t_dlist **stack)
 	while (current != NULL)
 	{
 		tmp = get_content(current->content);
-
-		//if(cheapest == NULL || ((tmp.abs_cost < costref) || (((tmp.abs_cost == costref) &&ft_abs(tmp.distance) < ft_abs(get_content(cheapest->content).distance)))))
-		if(cheapest == NULL || (tmp.abs_cost < costref))
+		if(cheapest == NULL || ((tmp.abs_cost < costref) || (((tmp.abs_cost < costref) &&ft_abs(tmp.distance) < ft_abs(get_content(cheapest->content).distance)))))
 		{
 		    costref = tmp.abs_cost;
 		    cheapest = current;
@@ -317,31 +353,91 @@ void	sort_three(t_dlist **a, t_dlist **b, int *operations)
 void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
 {
 	t_dlist *cheapest;
-	int		direction;
-	int		op_count;
+	int		adirection;
+	int		aop_count;
+	int		bdirection;
+	int		bop_count;
+	int		minopcount;
 
 	cheapest = get_cheapest_node(a);
-	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
-	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
-	while (op_count > 0)
+	aop_count = ft_abs(get_content(cheapest->content).move_cost_a);
+	adirection = ft_ispos(get_content(cheapest->content).move_cost_a);
+	bop_count = ft_abs(get_content(cheapest->content).move_cost_b);
+	bdirection = ft_ispos(get_content(cheapest->content).move_cost_b);
+
+	minopcount = (aop_count < bop_count) ? aop_count : bop_count;
+
+	while (minopcount > 0 && adirection == bdirection)
 	{
-		if(direction)
+		if (adirection)
+			*operations = *operations + rr(a, b);
+		else
+			*operations = *operations + rrr(a, b);
+		minopcount--;
+		aop_count--;
+		bop_count--;
+	}
+	while (aop_count > 0)
+	{
+		if(adirection)
 			*operations = *operations + ra(a);
 		else
 			*operations = *operations + rra(a);
-		op_count--;
+		aop_count--;
 	}
-	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
-	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
-	while (op_count > 0)
+	while (bop_count > 0)
 	{
-		if(direction)
+		if(bdirection)
 			*operations = *operations + rb(b);
 		else
 			*operations = *operations + rrb(b);
-		op_count--;
+		bop_count--;
 	}
 }
+
+void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
+{
+	update_meta(a, b);
+	int sm_p_dist_pos = get_sm_p_dist_pos(a);
+	while (sm_p_dist_pos != 0)
+	{
+		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
+			*operations = *operations + rra(a);
+		else
+			*operations = *operations + ra(a);
+		update_meta(a,b);
+		sm_p_dist_pos = get_sm_p_dist_pos(a);
+	}
+}
+
+//void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
+//{
+//	t_dlist *cheapest;
+//	int		direction;
+//	int		op_count;
+//
+//	cheapest = get_cheapest_node(a);
+//	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
+//	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
+//	while (op_count > 0)
+//	{
+//		if(direction)
+//			*operations = *operations + ra(a);
+//		else
+//			*operations = *operations + rra(a);
+//		op_count--;
+//	}
+//	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
+//	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
+//	while (op_count > 0)
+//	{
+//		if(direction)
+//			*operations = *operations + rb(b);
+//		else
+//			*operations = *operations + rrb(b);
+//		op_count--;
+//	}
+//}
 
 void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
 {
@@ -394,14 +490,28 @@ int	sort(t_dlist **a, t_dlist **b)
 		{
 			update_meta(a, b);
 			calc_phase_one_costs(a, b);
+	//ft_dlstput(a, put_content, '\n');
+	//write(1, "\n", 1);
+	//ft_dlstput(b, put_content, '\n');
+	//write(1, "\n", 1);
 			perform_pb_rotations(a, b, &operations);
 			operations = operations + pb(a, b);
 		}
 		sort_three(a, b, &operations);
+		clear_costs(a, b);
+	//ft_dlstput(a, put_content, '\n');
+	//write(1, "\n", 1);
+	//ft_dlstput(b, put_content, '\n');
+	//write(1, "\n", 1);
 		shift_bottom_down(a, b, &operations);
 		while(ft_dlstsize((*b)) != 0)
 		{
 			update_meta(a, b);
+			//calc_phase_two_costs(a, b);
+	//ft_dlstput(a, put_content, '\n');
+	//write(1, "\n", 1);
+	//ft_dlstput(b, put_content, '\n');
+	//write(1, "\n", 1);
 			perform_pa_rotations(a, b, &operations);
 			operations = operations + pa(a, b);
 		}
@@ -428,17 +538,36 @@ int validate_arg(char *arg)
 	return (1);
 }
 
+void	handle_string_input(t_dlist **stack_a, char *str, int *e)
+{
+	size_t i = 0;
+	size_t	count = ft_count_words(str, ' ');
+	char	**words = ft_split(str, ' ');
+	while (i < count)
+	{
+		if(validate_arg(words[i]) != 0)
+			(*e)++;
+		ft_dlstadd_back(stack_a, ft_dlstnew(set_content(ft_atoi(words[i]))));
+		i++;
+	}
+}
+
 void	fill_initial(t_dlist **stack_a, int argc, char **argv, int *e)
 {
 	int		i;
 
 	i = 1;
-	while (i < argc)
+	if (argc == 2)
+		handle_string_input(stack_a, argv[1], e);
+	else
 	{
-		if(validate_arg(argv[i]) != 0)
-			(*e)++;
-		ft_dlstadd_back(stack_a, ft_dlstnew(set_content(ft_atoi(argv[i]))));
-		i++;
+		while (i < argc)
+		{
+			if(validate_arg(argv[i]) != 0)
+				(*e)++;
+			ft_dlstadd_back(stack_a, ft_dlstnew(set_content(ft_atoi(argv[i]))));
+			i++;
+		}
 	}
 }
 
@@ -465,7 +594,9 @@ int main(int argc, char **argv)
 		write(1, "Error\n", 6);
 		return (0);
 	}
-	ft_putnbr(sort(stack_a, stack_b));
-	write(1, "\n", 1);
+	sort(stack_a, stack_b);
+	//write(1, "\n", 1);
+	//ft_dlstput(stack_a, put_short, ' ');
+	//write(1, "\n", 1);
 	return (0);
 }
