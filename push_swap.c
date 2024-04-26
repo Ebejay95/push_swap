@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 18:03:18 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/26 17:05:59 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,27 @@ int	get_max(t_dlist **stack)
 		lst = lst->next;
 	}
 	return (valbrd);
+}
+
+t_dlist *get_max_node(t_dlist **stack)
+{
+	t_dlist	*current = NULL;
+	t_dlist	*maxnode = NULL;
+	t_psu	*tmp;
+	int max = INT_MIN;
+
+	current = (*stack);
+	while (current != NULL)
+	{
+		tmp = current->content;
+		if (tmp->num_data > max)
+		{
+			max = tmp->num_data;
+			maxnode = current;
+		}
+		current = current->next;
+	}
+	return (maxnode);
 }
 
 int	get_pos_min(t_dlist **stack)
@@ -104,6 +125,50 @@ int	get_pos_max(t_dlist **stack)
 		lst = lst->next;
 	}
 	return (pos_max);
+}
+
+int	get_indx_min(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		valbrd;
+	lst = (*stack);
+	valbrd = INT_MAX;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->index < valbrd)
+		{
+			valbrd = tmp->index;
+		}
+		lst = lst->next;
+	}
+	return (valbrd);
+}
+
+int	get_indx_max(t_dlist **stack)
+{
+	t_psu	*tmp;
+	t_dlist *lst;
+	int		valbrd;
+	lst = (*stack);
+	valbrd = INT_MIN;
+
+	if (stack == NULL || (*stack) == NULL)
+		return (-1);
+	while (lst != NULL)
+	{
+		tmp = lst->content;
+		if (tmp->index > valbrd)
+		{
+			valbrd = tmp->index;
+		}
+		lst = lst->next;
+	}
+	return (valbrd);
 }
 
 int	get_sm_p_dist_pos(t_dlist **stack)
@@ -180,6 +245,21 @@ int is_sorted(t_dlist **a, t_dlist **b)
 	return (0);
 }
 
+
+void	find_target(int n, t_dlist **a)
+{
+	t_psu	*tmp;
+
+	if ((*a) != NULL)
+	{
+		while ((*a) != NULL)
+		{
+			tmp = (*a)->content;
+			tmp->distance = ft_abs(n - tmp->index) - 1;
+			a = &((*a)->next);
+		}
+	}
+}
 
 void	update_distances(t_dlist **a, t_dlist **b)
 {
@@ -270,6 +350,7 @@ void	clear_costs(t_dlist **a, t_dlist **b)
 		tmp = lst->content;
 		tmp->move_cost_a = 0;
 		tmp->move_cost_b = 0;
+		tmp->distance = 0;
 		tmp->abs_cost = 0;
 		lst = lst->next;
 	}
@@ -279,6 +360,7 @@ void	clear_costs(t_dlist **a, t_dlist **b)
 		tmp = lst->content;
 		tmp->move_cost_a = 0;
 		tmp->move_cost_b = 0;
+		tmp->distance = 0;
 		tmp->abs_cost = 0;
 		lst = lst->next;
 	}
@@ -312,52 +394,99 @@ int	get_b_effective_pos(int ref, t_dlist **b)
 	return (pos_max);
 }
 
-int	calc_b_costs(int ref, t_dlist **b)
+int	calc_othertack(int ref, t_dlist **b)
 {
 	int len;
 	int position;
-	int bcost;
-	bcost = 0;
+	int cost;
+	cost = 0;
 	len = ft_dlstsize((*b));
 	position = get_b_effective_pos(ref, b);
 	if (position > (len - position) && (position != 0))
-		bcost = (len - position) * (-1);
+		cost = (len - position) * (-1);
 	else
-		bcost = position;
-	return (bcost);
+		cost = position;
+	return (cost);
 }
 
-void	calc_phase_one_costs(t_dlist **a, t_dlist **b)
-{
-	int len;
-	t_psu	*tmp;
-	t_dlist *lst;
+//int get_next_possible_ndx(int current_index, t_dlist **a)
+//{
+//	t_dlist *current = (*a);
+//	int target = -1;
+//	int a_has_greater = 1;
+//	while (current != NULL)
+//	{
+//		if(current->next != NULL)
+//		{
+//			if(current_index > get_content(current->next->content).index)
+//			{
+//				a_has_greater = 0;
+//				target = get_content(current->next->content).index;
+//			}
+//			else if (a_has_greater == 0 && current_index < get_content(current->next->content).index)
+//			{
+//				target = get_content(current->next->content).index;
+//			}
+//		}
+//		current = current->next;
+//	}
+//	if(current_index > get_indx_max(a))
+//		target = get_indx_min(a);
+//	if(target == -1)
+//		target = get_indx_min(a);
+//	return (target);
+//}
 
-	lst = (*a);
-	len = ft_dlstsize(lst);
-	while (lst != NULL)
+int get_next_possible_ndx(int current_index, t_dlist **a)
+{
+	t_dlist *current = (*a);
+	int	next_greater = 0;
+	int	smalles_next_greater = INT_MAX;
+	int target = -1;
+	int a_has_greater = 1;
+	while (current != NULL)
 	{
-		tmp = lst->content;
-		if (tmp->position > (len / 2))
-			tmp->move_cost_a = 0 - (len - tmp->position);
-		else if (tmp->position < (len / 2))
-			tmp->move_cost_a = tmp->position;
-		else
+		if(current->next != NULL)
 		{
-			if (ft_even(len))
-				tmp->move_cost_a = (len / 2);
-			else
-				tmp->move_cost_a = tmp->position;
+			if(current_index > get_content(current->next->content).index)
+			{
+				a_has_greater = 0;
+				target = get_content(current->next->content).index;
+			}
+			else if (a_has_greater == 0 && current_index < get_content(current->next->content).index)
+			{
+				target = get_content(current->next->content).index;
+			}
 		}
-		if(b != NULL)
-			tmp->move_cost_b = calc_b_costs(tmp->num_data, b);
-		tmp->abs_cost = ft_abs(tmp->move_cost_b) + ft_abs(tmp->move_cost_a);
-		lst = lst->next;
+		current = current->next;
 	}
+	if(current_index > get_indx_max(a))
+		target = get_indx_min(a);
+	if(target == -1)
+		target = get_indx_min(a);
+	return (target);
 }
-void	calc_phase_two_costs(t_dlist **a, t_dlist **b)
+
+int	 getposbydex(int index, t_dlist **a)
+{
+	t_dlist	*current;
+	t_psu *tmp;
+
+	current = (*a);
+	while (current != NULL)
+	{
+		tmp = current->content;
+		if (index == tmp->index)
+			return (get_content(current->content).position);
+		current = current->next; 
+	}
+	return (get_content((*a)->content).position);
+}
+
+void	calculate_costs(t_dlist **a, t_dlist **b)
 {
 	int len;
+	t_psu	ref = get_content((*a)->content);
 	t_psu	*tmp;
 	t_dlist *lst;
 
@@ -366,6 +495,7 @@ void	calc_phase_two_costs(t_dlist **a, t_dlist **b)
 	while (lst != NULL)
 	{
 		tmp = lst->content;
+		tmp->distance = ft_abs(ref.index - tmp->index);
 		if (tmp->position > (len / 2))
 			tmp->move_cost_b = 0 - (len - tmp->position);
 		else if (tmp->position < (len / 2))
@@ -377,14 +507,82 @@ void	calc_phase_two_costs(t_dlist **a, t_dlist **b)
 			else
 				tmp->move_cost_b = tmp->position;
 		}
-		if(b != NULL)
-			tmp->move_cost_a = calc_b_costs(tmp->num_data, a);
+
+		ft_printf("fuer i %i: ", get_content(lst->content).index);
+		int	target_distance = get_next_possible_ndx(get_content(lst->content).index, a);
+		int	targetpos = getposbydex(target_distance, a);
+		ft_printf("beste i -> %i %i\n", target_distance, targetpos);
+			//ft_printf("aposreq %i \n", ref.index);
+		tmp->move_cost_a = targetpos;
 		tmp->abs_cost = ft_abs(tmp->move_cost_a) + ft_abs(tmp->move_cost_b);
 		lst = lst->next;
 	}
 }
 
-t_dlist *get_cheapest_node(t_dlist **stack)
+//void	calculate_costs(t_dlist **a, t_dlist **b)
+//{
+//	int	alen = ft_dlstsize((*a));
+//	int	blen = ft_dlstsize((*b));
+//	t_dlist *current = (*b);
+//
+//	while(current != NULL)
+//	{
+//		t_psu *bcontent = current->content;
+//
+//		current = current->next;
+//	}
+//}
+
+//void	calculate_costs(t_dlist **a, t_dlist **b)
+//{
+//	int len;
+//	t_psu	*tmp;
+//	t_dlist *lst;
+//
+//	lst = (*b);
+//	len = ft_dlstsize(lst);
+//	while (lst != NULL)
+//	{
+//		tmp = lst->content;
+//		if (tmp->position > (len / 2))
+//			tmp->move_cost_b = 0 - (len - tmp->position);
+//		else if (tmp->position < (len / 2))
+//			tmp->move_cost_b = tmp->position;
+//		else
+//		{
+//			if (ft_even(len))
+//				tmp->move_cost_b = (len / 2);
+//			else
+//				tmp->move_cost_b = tmp->position;
+//		}
+//		if(b != NULL)
+//			tmp->move_cost_a = calc_othertack(tmp->num_data, a);
+//		tmp->abs_cost = ft_abs(tmp->move_cost_a) + ft_abs(tmp->move_cost_b);
+//		lst = lst->next;
+//	}
+//}
+
+int	can_insert(t_dlist **a, t_psu *b_content)
+{
+	t_dlist *current_a = (*a);
+	int data = b_content->num_data;
+
+	if(!current_a || data <= get_content(current_a->content).num_data)
+		return (1);
+	while(current_a->next != NULL)
+	{
+		int current_data = get_content(current_a->content).num_data;
+		int next_data = get_content(current_a->next->content).num_data;
+		if(current_data <= data && data <= next_data)
+			return (1);
+		current_a = current_a->next;
+	}
+	if(data >= get_content(current_a->content).num_data)
+		return (1);
+	return (0);
+}
+
+t_dlist *get_cheapest_node(t_dlist **a, t_dlist **b)
 {
 	t_psu tmp;
 	t_dlist *current;
@@ -393,14 +591,18 @@ t_dlist *get_cheapest_node(t_dlist **stack)
 
 	cheapest = NULL;
 	costref = INT_MAX;
-	current = (*stack);
+	current = (*b);
 	while (current != NULL)
 	{
 		tmp = get_content(current->content);
-		if(cheapest == NULL || ((tmp.abs_cost < costref) || (((tmp.abs_cost < costref) &&ft_abs(tmp.distance) < ft_abs(get_content(cheapest->content).distance)))))
+		if(can_insert(a,&tmp))
 		{
-		    costref = tmp.abs_cost;
-		    cheapest = current;
+			int cost = tmp.abs_cost;
+			if (cost < costref)
+			{
+		    	costref = cost;
+		    	cheapest = current;
+			}
 		}
 		current = current->next;
 	}
@@ -423,32 +625,21 @@ void shift_bottom_down(t_dlist **a, t_dlist **b, int *operations)
 }
 
 
-void	sort_three(t_dlist **a, t_dlist **b, int *operations)
+void	sort_three(t_dlist **a)
 {
-	int first, second, third;
-	///TODO - rewrite//////////!!!!!!!!!!!!!!
-	update_meta(a, b);
-	first = get_content((*a)->content).num_data;
-	second = get_content((*a)->next->content).num_data;
-	third = get_content((*a)->next->next->content).num_data;
+	t_dlist	*maxnode;
 
-	if (first > second && second < third && first < third) {
-		*operations = *operations + sa(a);
-	} else if (first > second && second > third) {
-		*operations = *operations + sa(a);
-		*operations = *operations + rra(a);
-	} else if (first > second && second < third && first > third) {
-		*operations = *operations + ra(a);
-	} else if (first < second && second > third && first < third) {
-		*operations = *operations + sa(a);
-		*operations = *operations + ra(a);
-	} else if (first < second && second > third && first > third) {
-		*operations = *operations + rra(a);
-	}
+	maxnode = get_max_node(a);
+	if(maxnode == (*a))
+		ra(a);
+	else if(maxnode == (*a)->next)
+		rra(a);
+	if(get_content((*a)->content).num_data > get_content((*a)->next->content).num_data)
+		sa(a);
 }
 
 
-void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
+void	perform_pb_rotations(t_dlist **a, t_dlist **b)
 {
 	t_dlist *cheapest;
 	int		adirection;
@@ -457,20 +648,21 @@ void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
 	int		bop_count;
 	int		minopcount;
 
-	cheapest = get_cheapest_node(a);
+	cheapest = get_cheapest_node(a, b);
+	printf("cheapest %i (%i %i)\n", get_content(cheapest->content).num_data, get_content(cheapest->content).move_cost_a, get_content(cheapest->content).move_cost_b);
 	aop_count = ft_abs(get_content(cheapest->content).move_cost_a);
 	adirection = ft_ispos(get_content(cheapest->content).move_cost_a);
 	bop_count = ft_abs(get_content(cheapest->content).move_cost_b);
 	bdirection = ft_ispos(get_content(cheapest->content).move_cost_b);
-
+	printf("perform_pb_rotations %i %i \n", aop_count, bop_count);
 	minopcount = (aop_count < bop_count) ? aop_count : bop_count;
 
 	while (minopcount > 0 && adirection == bdirection)
 	{
 		if (adirection)
-			*operations = *operations + rr(a, b);
+			rr(a, b);
 		else
-			*operations = *operations + rrr(a, b);
+			rrr(a, b);
 		minopcount--;
 		aop_count--;
 		bop_count--;
@@ -478,17 +670,17 @@ void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
 	while (aop_count > 0)
 	{
 		if(adirection)
-			*operations = *operations + ra(a);
+			ra(a);
 		else
-			*operations = *operations + rra(a);
+			rra(a);
 		aop_count--;
 	}
 	while (bop_count > 0)
 	{
 		if(bdirection)
-			*operations = *operations + rb(b);
+			rb(b);
 		else
-			*operations = *operations + rrb(b);
+			rrb(b);
 		bop_count--;
 	}
 }
@@ -568,12 +760,10 @@ void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
 int	sort(t_dlist **a, t_dlist **b)
 {
 	int operations;
-	int upper_sep;
-	int lower_sep;
+	int sep;
 
 	operations = 0;
-	lower_sep = get_min(a) + ((get_max(a) - get_min(a)) / 3);
-	upper_sep = get_min(a) + (2 * ((get_max(a) - get_min(a)) / 3));
+	sep = (ft_dlstsize((*a)) / 3);
 	setindexes(a);
 	if(!is_sorted(a, b) && ft_dlstsize((*a)) == 2)
 	{
@@ -583,44 +773,71 @@ int	sort(t_dlist **a, t_dlist **b)
 	}
 	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 3)
 	{
-		sort_three(a, b, &operations);
+		sort_three(a);
 	}
+	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 4)
+	{
+		// max node push push
+		sort_three(a);
+	}
+	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 5)
+	{
+		// max node push push
+		sort_three(a);
+	}
+	////// 3 - 5 sollten nicht mehr als 5 operationen brauchen/
 	else if (!is_sorted(a, b))
 	{
 		ft_dlstput(a, put_content, '\n');
 		write(1, "\n", 1);
 		ft_dlstput(b, put_content, '\n');
 		write(1, "\n", 1);
-		//printf("seps: %i %i\n", lower_sep, upper_sep);
-		while (get_max(a) > upper_sep)
+		while (ft_dlstsize((*a)) > 0)
 		{
-			//printf("cur: %i max: %i\n", get_content((*a)->content).num_data, get_max(a));
-			if(get_content((*a)->content).num_data > upper_sep)
-				operations = operations + pb(a, b);
+			if(get_content((*a)->content).index < sep)
+			{
+				pb(a, b);
+				sep++;
+			}
 			else
-				operations = operations + ra(a);
-		}
-		while (get_max(a) > lower_sep)
-		{
-			//printf("cur: %i max: %i\n", get_content((*a)->content).num_data, get_max(a));
-			if(get_content((*a)->content).num_data <= upper_sep && get_content((*a)->content).num_data >= lower_sep)
-				operations = operations + pb(a, b);
-			else
-				operations = operations + ra(a);
+				ra(a);
 		}
 		while(ft_dlstsize((*a)) > 3)
 		{
-			update_meta(a, b);
-			calc_phase_one_costs(a, b);
-	//ft_dlstput(a, put_content, '\n');
-	//write(1, "\n", 1);
-	//ft_dlstput(b, put_content, '\n');
-	//write(1, "\n", 1);
-			perform_pb_rotations(a, b, &operations);
 			operations = operations + pb(a, b);
 		}
-		sort_three(a, b, &operations);
-
+		clear_costs(a, b);
+		pa(a,b);
+		pa(a,b);
+		pa(a,b);
+		while(ft_dlstsize((*b)) != 0)
+		{
+			update_meta(a, b);
+			calculate_costs(a, b);
+			ft_dlstput(a, put_content, '\n');
+			write(1, "\n", 1);
+			ft_dlstput(b, put_content, '\n');
+			write(1, "\n", 1);
+			perform_pb_rotations(a, b);
+			pa(a,b);
+			ft_dlstput(a, put_short, ' ');
+			write(1, "\n", 1);
+			ft_dlstput(b, put_short, ' ');
+			write(1, "\n", 1);
+			
+			// update_meta(a, b);
+			// calculate_costs(a, b);
+			// ft_dlstput(a, put_content, '\n');
+			// write(1, "\n", 1);
+			// ft_dlstput(b, put_content, '\n');
+			// write(1, "\n", 1);
+			// perform_pb_rotations(a, b);
+			// pa(a,b);
+			// ft_dlstput(a, put_short, ' ');
+			// write(1, "\n", 1);
+			// ft_dlstput(b, put_short, ' ');
+			// write(1, "\n", 1);
+		}
 	}
 	return (operations);
 }
@@ -698,6 +915,7 @@ int main(int argc, char **argv)
 	sort(stack_a, stack_b);
 	write(1, "\n", 1);
 	ft_dlstput(stack_a, put_short, ' ');
+	ft_dlstput(stack_b, put_short, ' ');
 	write(1, "\n", 1);
 	return (0);
 }

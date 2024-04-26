@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/25 17:18:23 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/26 11:51:29 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,7 +325,7 @@ void shift_bottom_down(t_dlist **a, t_dlist **b, int *operations)
 }
 
 
-void	sort_three(t_dlist **a, t_dlist **b, int *operations)
+void	sort_three(t_dlist **a, t_dlist **b)
 {
 	int first, second, third;
 	///TODO - rewrite//////////!!!!!!!!!!!!!!
@@ -335,17 +335,17 @@ void	sort_three(t_dlist **a, t_dlist **b, int *operations)
 	third = get_content((*a)->next->next->content).num_data;
 
 	if (first > second && second < third && first < third) {
-		*operations = *operations + sa(a);
+		sa(a);
 	} else if (first > second && second > third) {
-		*operations = *operations + sa(a);
-		*operations = *operations + rra(a);
+		sa(a);
+		rra(a);
 	} else if (first > second && second < third && first > third) {
-		*operations = *operations + ra(a);
+		ra(a);
 	} else if (first < second && second > third && first < third) {
-		*operations = *operations + sa(a);
-		*operations = *operations + ra(a);
+		sa(a);
+		ra(a);
 	} else if (first < second && second > third && first > third) {
-		*operations = *operations + rra(a);
+		rra(a);
 	}
 }
 
@@ -395,49 +395,49 @@ void	perform_pb_rotations(t_dlist **a, t_dlist **b, int *operations)
 	}
 }
 
-//void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
-//{
-//	update_meta(a, b);
-//	int sm_p_dist_pos = get_sm_p_dist_pos(a);
-//	while (sm_p_dist_pos != 0)
-//	{
-//		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
-//			*operations = *operations + rra(a);
-//		else
-//			*operations = *operations + ra(a);
-//		update_meta(a,b);
-//		sm_p_dist_pos = get_sm_p_dist_pos(a);
-//	}
-//}
-
 void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
 {
-	t_dlist *cheapest;
-	int		direction;
-	int		op_count;
-
-	cheapest = get_cheapest_node(a);
-	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
-	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
-	while (op_count > 0)
+	update_meta(a, b);
+	int sm_p_dist_pos = get_sm_p_dist_pos(a);
+	while (sm_p_dist_pos != 0)
 	{
-		if(direction)
-			*operations = *operations + ra(a);
-		else
+		if (sm_p_dist_pos > (ft_dlstsize((*a)) / 2))
 			*operations = *operations + rra(a);
-		op_count--;
-	}
-	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
-	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
-	while (op_count > 0)
-	{
-		if(direction)
-			*operations = *operations + rb(b);
 		else
-			*operations = *operations + rrb(b);
-		op_count--;
+			*operations = *operations + ra(a);
+		update_meta(a,b);
+		sm_p_dist_pos = get_sm_p_dist_pos(a);
 	}
 }
+
+//void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
+//{
+//	t_dlist *cheapest;
+//	int		direction;
+//	int		op_count;
+//
+//	cheapest = get_cheapest_node(a);
+//	op_count = ft_abs(get_content(cheapest->content).move_cost_a);
+//	direction = ft_ispos(get_content(cheapest->content).move_cost_a);
+//	while (op_count > 0)
+//	{
+//		if(direction)
+//			*operations = *operations + ra(a);
+//		else
+//			*operations = *operations + rra(a);
+//		op_count--;
+//	}
+//	op_count = ft_abs(get_content(cheapest->content).move_cost_b);
+//	direction = ft_ispos(get_content(cheapest->content).move_cost_b);
+//	while (op_count > 0)
+//	{
+//		if(direction)
+//			*operations = *operations + rb(b);
+//		else
+//			*operations = *operations + rrb(b);
+//		op_count--;
+//	}
+//}
 
 void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
 {
@@ -480,8 +480,17 @@ int	sort(t_dlist **a, t_dlist **b)
 	}
 	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 3)
 	{
-		sort_three(a, b, &operations);
+		sort_three(a, b);
 	}
+	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 5)
+	{
+		sort_four(a, b);
+	}
+	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 5)
+	{
+		sort_five(a, b);
+	}
+	////// 3 - 5 sollten nicht mehr als 5 operationen brauchen/
 	else if (!is_sorted(a, b))
 	{
 		while(ft_dlstsize((*a)) > 3 && ft_dlstsize((*b)) < 2)
@@ -497,10 +506,10 @@ int	sort(t_dlist **a, t_dlist **b)
 			perform_pb_rotations(a, b, &operations);
 			operations = operations + pb(a, b);
 		}
-		sort_three(a, b, &operations);
+		sort_three(a, b);
 		clear_costs(a, b);
 		ft_putstr("clear_costs\n");
-		//shift_bottom_down(a, b, &operations);
+		shift_bottom_down(a, b, &operations);
 		while(ft_dlstsize((*b)) != 0)
 		{
 			update_meta(b, a);
