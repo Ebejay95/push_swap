@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/26 17:05:59 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/27 16:11:48 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -440,31 +440,40 @@ int	calc_othertack(int ref, t_dlist **b)
 int get_next_possible_ndx(int current_index, t_dlist **a)
 {
 	t_dlist *current = (*a);
-	int	next_greater = 0;
-	int	smalles_next_greater = INT_MAX;
 	int target = -1;
-	int a_has_greater = 1;
+	int smallestgreater = INT_MAX;
+	int found_smaller = 0;
+	int current_index_value = 0;
 	while (current != NULL)
 	{
-		if(current->next != NULL)
+		current_index_value = get_content(current->content).index;
+		if(current_index < current_index_value)
 		{
-			if(current_index > get_content(current->next->content).index)
+			if(current_index_value < smallestgreater)
 			{
-				a_has_greater = 0;
-				target = get_content(current->next->content).index;
+				smallestgreater = current_index_value;
+				found_smaller = 0;
 			}
-			else if (a_has_greater == 0 && current_index < get_content(current->next->content).index)
-			{
-				target = get_content(current->next->content).index;
-			}
+		}
+		else
+		{
+			found_smaller = 1;
 		}
 		current = current->next;
 	}
-	if(current_index > get_indx_max(a))
-		target = get_indx_min(a);
-	if(target == -1)
+	if(smallestgreater != INT_MAX)
+		target = smallestgreater;
+	else if (found_smaller)
 		target = get_indx_min(a);
 	return (target);
+}
+
+int	efficientpos(int position, int size)
+{
+	if(position > (size / 2))
+		return ((-1) * (size - position));
+	else
+		return (position);
 }
 
 int	 getposbydex(int index, t_dlist **a)
@@ -477,10 +486,10 @@ int	 getposbydex(int index, t_dlist **a)
 	{
 		tmp = current->content;
 		if (index == tmp->index)
-			return (get_content(current->content).position);
+			return (efficientpos(get_content(current->content).position, ft_dlstsize((*a))));
 		current = current->next; 
 	}
-	return (get_content((*a)->content).position);
+	return (efficientpos(get_content((*a)->content).position, ft_dlstsize((*a))));
 }
 
 void	calculate_costs(t_dlist **a, t_dlist **b)
@@ -508,10 +517,9 @@ void	calculate_costs(t_dlist **a, t_dlist **b)
 				tmp->move_cost_b = tmp->position;
 		}
 
-		ft_printf("fuer i %i: ", get_content(lst->content).index);
+		//ft_printf("fuer i %i: ", get_content(lst->content).index);
 		int	target_distance = get_next_possible_ndx(get_content(lst->content).index, a);
 		int	targetpos = getposbydex(target_distance, a);
-		ft_printf("beste i -> %i %i\n", target_distance, targetpos);
 			//ft_printf("aposreq %i \n", ref.index);
 		tmp->move_cost_a = targetpos;
 		tmp->abs_cost = ft_abs(tmp->move_cost_a) + ft_abs(tmp->move_cost_b);
@@ -609,18 +617,27 @@ t_dlist *get_cheapest_node(t_dlist **a, t_dlist **b)
 	return (cheapest);
 }
 
-void shift_bottom_down(t_dlist **a, t_dlist **b, int *operations)
+void shift_max_down(t_dlist **a)
 {
-	int pos_max = get_pos_max(b);
-	update_meta(a, b);
-	while (pos_max != 0)
+	int pos_max = get_pos_max(a);
+	int moves;
+	if (pos_max > (ft_dlstsize((*a)) / 2))
 	{
-		if (pos_max > (ft_dlstsize((*b)) / 2))
-			*operations = *operations + rrb(b);
-		else
-			*operations = *operations + rb(b);
-		update_meta(a,b);
-		pos_max = get_pos_max(b);
+		moves = ft_dlstsize((*a)) - pos_max;
+		while (moves > 0)
+		{
+			rra(a);
+			moves--;
+		}
+	}
+	else
+	{
+		moves = pos_max + 1;
+		while (moves > 0)
+		{
+			ra(a);
+			moves--;
+		}
 	}
 }
 
@@ -649,12 +666,12 @@ void	perform_pb_rotations(t_dlist **a, t_dlist **b)
 	int		minopcount;
 
 	cheapest = get_cheapest_node(a, b);
-	printf("cheapest %i (%i %i)\n", get_content(cheapest->content).num_data, get_content(cheapest->content).move_cost_a, get_content(cheapest->content).move_cost_b);
+	//printf("cheapest %i (%i %i)\n", get_content(cheapest->content).num_data, get_content(cheapest->content).move_cost_a, get_content(cheapest->content).move_cost_b);
 	aop_count = ft_abs(get_content(cheapest->content).move_cost_a);
 	adirection = ft_ispos(get_content(cheapest->content).move_cost_a);
 	bop_count = ft_abs(get_content(cheapest->content).move_cost_b);
 	bdirection = ft_ispos(get_content(cheapest->content).move_cost_b);
-	printf("perform_pb_rotations %i %i \n", aop_count, bop_count);
+	//printf("perform_pb_rotations %i %i \n", aop_count, bop_count);
 	minopcount = (aop_count < bop_count) ? aop_count : bop_count;
 
 	while (minopcount > 0 && adirection == bdirection)
@@ -729,29 +746,50 @@ void	perform_pa_rotations(t_dlist **a, t_dlist **b, int *operations)
 //	}
 //}
 
-void	shift_bottom_up(t_dlist **a, t_dlist **b, int *operations)
+void	shift_min_up(t_dlist **a)
 {
-	int count;
-
-	update_meta(a,b);
-	if(get_pos_max(a) < (ft_dlstsize((*a) - 1) / 2))
+	int pos_min = get_pos_min(a);
+	int moves;
+	if (pos_min > (ft_dlstsize((*a)) / 2))
 	{
-		count = get_pos_max(a);
-		while(count > 0)
+		moves = ft_dlstsize((*a)) - pos_min;
+		while (moves > 0)
 		{
-			*operations = *operations + ra(a);
-			update_meta(a,b);
-			count--;
+			rra(a);
+			moves--;
 		}
 	}
 	else
 	{
-		count = ((ft_dlstsize((*a)) - 1) - get_pos_max(a));
-		while(count > 0)
+		moves = pos_min;
+		while (moves > 0)
 		{
-			*operations = *operations + rra(a);
-			update_meta(a,b);
-			count--;
+			ra(a);
+			moves--;
+		}
+	}
+}
+
+void	shift_max_up(t_dlist **a)
+{
+	int pos_max = get_pos_max(a);
+	int moves;
+	if (pos_max > (ft_dlstsize((*a)) / 2))
+	{
+		moves = ft_dlstsize((*a)) - pos_max;
+		while (moves > 0)
+		{
+			ra(a);
+			moves--;
+		}
+	}
+	else
+	{
+		moves = pos_max + 1;
+		while (moves > 0)
+		{
+			rra(a);
+			moves--;
 		}
 	}
 }
@@ -777,21 +815,32 @@ int	sort(t_dlist **a, t_dlist **b)
 	}
 	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 4)
 	{
-		// max node push push
+		update_meta(a, b);
+		shift_min_up(a);
+		pb(a, b);
 		sort_three(a);
+		pa(a,b);
+		update_meta(a, b);
+		if(get_pos_max(a) != (ft_dlstsize((*a)) - 1))
+			shift_max_down(a);
 	}
 	else if(!is_sorted(a, b) && ft_dlstsize((*a)) == 5)
 	{
-		// max node push push
+		update_meta(a, b);
+		shift_min_up(a);
+		pb(a, b);
+		update_meta(a, b);
+		shift_min_up(a);
+		pb(a, b);
 		sort_three(a);
+		pa(a,b);
+		pa(a,b);
+		update_meta(a, b);
+		if(get_pos_max(a) != (ft_dlstsize((*a)) - 1))
+			shift_max_down(a);
 	}
-	////// 3 - 5 sollten nicht mehr als 5 operationen brauchen/
 	else if (!is_sorted(a, b))
 	{
-		ft_dlstput(a, put_content, '\n');
-		write(1, "\n", 1);
-		ft_dlstput(b, put_content, '\n');
-		write(1, "\n", 1);
 		while (ft_dlstsize((*a)) > 0)
 		{
 			if(get_content((*a)->content).index < sep)
@@ -809,21 +858,20 @@ int	sort(t_dlist **a, t_dlist **b)
 		clear_costs(a, b);
 		pa(a,b);
 		pa(a,b);
-		pa(a,b);
 		while(ft_dlstsize((*b)) != 0)
 		{
 			update_meta(a, b);
 			calculate_costs(a, b);
-			ft_dlstput(a, put_content, '\n');
-			write(1, "\n", 1);
-			ft_dlstput(b, put_content, '\n');
-			write(1, "\n", 1);
+			//ft_dlstput(a, put_content, '\n');
+			//write(1, "\n", 1);
+			//ft_dlstput(b, put_content, '\n');
+			//write(1, "\n", 1);
 			perform_pb_rotations(a, b);
 			pa(a,b);
-			ft_dlstput(a, put_short, ' ');
-			write(1, "\n", 1);
-			ft_dlstput(b, put_short, ' ');
-			write(1, "\n", 1);
+			//ft_dlstput(a, put_short, ' ');
+			//write(1, "\n", 1);
+			//ft_dlstput(b, put_short, ' ');
+			//write(1, "\n", 1);
 			
 			// update_meta(a, b);
 			// calculate_costs(a, b);
@@ -839,6 +887,9 @@ int	sort(t_dlist **a, t_dlist **b)
 			// write(1, "\n", 1);
 		}
 	}
+	update_meta(a, b);
+	if(get_pos_max(a) != (ft_dlstsize((*a)) - 1))
+		shift_max_down(a);
 	return (operations);
 }
 
