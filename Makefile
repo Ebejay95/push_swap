@@ -6,7 +6,7 @@
 #    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/04/19 08:43:54 by jeberle          ###   ########.fr        #
+#    Updated: 2024/04/28 01:10:50 by jeberle          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,10 +23,20 @@ DEPFLAGS= -MP -MD
 LFLAGS= -L$(LIBFT_DIR) -lft
 
 SRCS= \
+./analyzers.c \
+./analyzers2.c \
+./costs_helpers.c \
+./costs.c \
+./helpers.c \
+./input.c \
 ./push_swap.c \
 ./operations.c \
 ./operations2.c \
-./put.c \
+./operations3.c \
+./operationshelper.c \
+./psu_handling.c \
+./shifters.c \
+./sort.c \
 
 CFILES= $(SRCS)
 OBJECTS=$(CFILES:.c=.o)
