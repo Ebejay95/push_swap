@@ -6,24 +6,22 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 00:04:09 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 01:32:50 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/28 03:02:01 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-void	ch_as_next(int cur_ndx, int cur_ndx_val, int *fnd_sm, int *sm)
+int	make_target(int smallestgreater, int found_smaller, t_dlist **a)
 {
-	if (cur_ndx < cur_ndx_val)
-	{
-		if (cur_ndx_val < *sm)
-		{
-			*sm = cur_ndx_val;
-			*fnd_sm = 0;
-		}
-	}
-	else
-		*fnd_sm = 1;
+	int	target;
+
+	target = -1;
+	if (smallestgreater != INT_MAX)
+		target = smallestgreater;
+	else if (found_smaller)
+		target = get_indx_min(a);
+	return (target);
 }
 
 t_psu	*set_b_cost(t_psu *tmp, t_dlist *lst)

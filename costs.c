@@ -6,36 +6,39 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 23:21:42 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 01:17:11 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/28 03:02:26 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int	get_next_possible_ndx(int curndx, t_dlist **a)
+int	get_next_possible_ndx(int current_index, t_dlist **a)
 {
 	t_dlist	*current;
-	int		target;
-	int		smallgreater;
-	int		fnd_sm;
-	int		curndx_value;
+	int		smallestgreater;
+	int		found_smaller;
+	int		current_index_value;
 
 	current = (*a);
-	target = -1;
-	smallgreater = INT_MAX;
-	fnd_sm = 0;
-	curndx_value = 0;
+	smallestgreater = INT_MAX;
+	found_smaller = 0;
+	current_index_value = 0;
 	while (current != NULL)
 	{
-		curndx_value = n_cnt(current->content).index;
-		ch_as_next(curndx, curndx_value, &fnd_sm, &smallgreater);
+		current_index_value = n_cnt(current->content).index;
+		if (current_index < current_index_value)
+		{
+			if (current_index_value < smallestgreater)
+			{
+				smallestgreater = current_index_value;
+				found_smaller = 0;
+			}
+		}
+		else
+			found_smaller = 1;
 		current = current->next;
 	}
-	if (smallgreater != INT_MAX)
-		target = smallgreater;
-	else if (fnd_sm)
-		target = get_indx_min(a);
-	return (target);
+	return (make_target(smallestgreater, found_smaller, a));
 }
 
 int	efpos(int position, int size)

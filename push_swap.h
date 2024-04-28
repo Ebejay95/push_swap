@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 01:33:50 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/28 02:59:31 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ typedef struct s_psu
 	int	index;
 }	t_psu;
 
+void	*set_content(int n);
+void	put_content(void *n);
+void	put_short(void *n);
 void	setindexes(t_dlist **a);
 int		is_sorted(t_dlist **a, t_dlist **b);
 t_dlist	*get_cheapest_node(t_dlist **a, t_dlist **b);
@@ -43,7 +46,7 @@ void	fill_initial(t_dlist **stack_a, int argc, char **argv, int *e);
 int		can_insert(t_dlist **a, t_psu *b_content);
 t_psu	*set_b_cost(t_psu *tmp, t_dlist *lst);
 int		get_indx_min(t_dlist **stack);
-void	ch_as_next(int cur_ndx, int cur_ndx_val, int *fnd_sm, int *sm);
+int		make_target(int smallestgreater, int found_smaller, t_dlist **a);
 t_psu	n_cnt(void *n);
 void	*set_content(int i);
 void	put_dlist(t_dlist **lst, void (*t_dlistprint)(void *));

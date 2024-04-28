@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/28 01:39:13 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/28 03:35:46 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main(int argc, char **argv)
 	t_dlist	*stackanuller;
 	t_dlist	*stackbnuller;
 	int		error;
-
+/// FREEE AND CHECK ALL THE EDGE CASES
 	error = 0;
 	stackanuller = NULL;
 	stackbnuller = NULL;
