@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 02:59:31 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/29 23:15:56 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ typedef struct s_psu
 void	*set_content(int n);
 void	put_content(void *n);
 void	put_short(void *n);
+void	del_content(void *n);
+int		cmp_c(void *a, void *b);
 void	setindexes(t_dlist **a);
 int		is_sorted(t_dlist **a, t_dlist **b);
 t_dlist	*get_cheapest_node(t_dlist **a, t_dlist **b);
@@ -50,6 +52,7 @@ int		make_target(int smallestgreater, int found_smaller, t_dlist **a);
 t_psu	n_cnt(void *n);
 void	*set_content(int i);
 void	put_dlist(t_dlist **lst, void (*t_dlistprint)(void *));
+void	free_stacks(t_dlist **stack_a, t_dlist **stack_b);
 
 // operations
 int		sa(t_dlist **a);
