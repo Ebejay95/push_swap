@@ -6,7 +6,7 @@
 /*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/30 20:03:27 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/04/30 20:46:44 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(int argc, char **argv)
 	t_dlist	*stackanuller;
 	t_dlist	*stackbnuller;
 	int		error;
-/// FREEE > teste mit valgrind
+
 	error = 0;
 	stackanuller = NULL;
 	stackbnuller = NULL;
@@ -28,7 +28,6 @@ int	main(int argc, char **argv)
 	fill_initial(stack_a, argc, argv, &error);
 	if (error > 0)
 	{
-		free_stacks(stack_a, stack_b);
 		ft_putstr("Error\n");
 		return (0);
 	}
