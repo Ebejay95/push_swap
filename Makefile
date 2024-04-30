@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
+#    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/04/28 01:10:50 by jeberle          ###   ########.fr        #
+#    Updated: 2024/04/29 23:32:33 by jonathanebe      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ LIBFT_LIB=$(LIBFT_DIR)/$(LIBFT)
 
 CODEDIRS=.
 CC=cc
+#CC=cc -fsanitize=address -g
 CFLAGS= -Wall -Wextra -Werror
 DEPFLAGS= -MP -MD
 LFLAGS= -L$(LIBFT_DIR) -lft
@@ -51,6 +52,7 @@ $(LIBFT_LIB):
 	@$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJECTS)
+#	@$(CC) $(CFLAGS) $(LFLAGS) -fsanitize=address -o $(NAME) $(OBJECTS)
 	@$(CC) $(CFLAGS) $(LFLAGS) -o $(NAME) $(OBJECTS)
 	@echo "\033[32mSUCCESS: push_swap\033[0m"
 
