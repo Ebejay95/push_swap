@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 23:23:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/29 23:56:21 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/02 17:21:22 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,16 @@ void	fill_initial(t_dlist **a, int argc, char **argv, int *e)
 	}
 }
 
-void	free_stacks(t_dlist **a, t_dlist **stack_b)
+void	free_stacks(t_dlist **a, t_dlist **b)
 {
-	ft_dlstclear(a, del_content);
-	ft_dlstclear(stack_b, del_content);
+	if (a != NULL)
+	{
+		ft_dlstclear(a, del_content);
+		a = NULL;
+	}
+	if (b != NULL)
+	{
+		ft_dlstclear(b, del_content);
+		b = NULL;
+	}
 }

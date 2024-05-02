@@ -6,7 +6,7 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/13 13:21:20 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/29 23:45:47 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/02 17:21:04 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	main(int argc, char **argv)
 	t_dlist	*stackanuller;
 	t_dlist	*stackbnuller;
 	int		error;
-/// FREEE > teste mit valgrind
+
 	error = 0;
 	stackanuller = NULL;
 	stackbnuller = NULL;
