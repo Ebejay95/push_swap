@@ -6,20 +6,20 @@
 #    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/02 17:32:51 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/05/02 17:39:09 by jonathanebe      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME=push_swap
-NAME=checker
+TESTERNAME=checker
 
 LIBFT_DIR=libft
 LIBFT=libft.a
 LIBFT_LIB=$(LIBFT_DIR)/$(LIBFT)
 
 CODEDIRS=.
-CC=cc
-#CC=cc -fsanitize=address -g
+#CC=cc
+CC=cc -fsanitize=address -g
 CFLAGS= -Wall -Wextra -Werror
 DEPFLAGS= -MP -MD
 LFLAGS=-L$(LIBFT_DIR) -lft
@@ -40,13 +40,32 @@ SRCS= \
 ./shifters.c \
 ./sort.c \
 
-CFILES= $(SRCS)
-OBJECTS=$(CFILES:.c=.o)
+TESTERSRC= \
+./checker/checker.c \
+
+OBJ_DIR=obj/
+TESTOBJ_DIR=checker_obj/
+OBJECTS=$(SRCS:%.c=$(OBJ_DIR)%.o)
+TESTEROBJECTS=$(TESTERSRC:%.c=$(TESTOBJ_DIR)%.o)
 DEPFILES=push_swap.h
 
-.PHONY:	all clean fclean re libft
+.PHONY:	all clean fclean re libft checker
 
 all: $(LIBFT_LIB) $(NAME)
+
+bonus: $(TESTERNAME)
+
+$(OBJ_DIR)%.o: %.c
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(TESTOBJ_DIR)%.o: %.c
+	@mkdir -p $(@D)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(TESTERNAME): $(TESTEROBJECTS)
+	@$(CC) $(CFLAGS) $(LFLAGS) -o $(TESTERNAME) $(TESTEROBJECTS)
+	@echo "\033[32mSUCCESS: push_swap checker\033[0m"
 
 $(LIBFT_LIB):
 	@git submodule update --init --recursive --remote > /dev/null 2>&1
@@ -56,18 +75,13 @@ $(NAME): $(OBJECTS)
 	@$(CC) $(CFLAGS) -o $(NAME) $(OBJECTS) $(LFLAGS)
 	@echo "\033[32mSUCCESS: push_swap\033[0m"
 
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
-
-bonus: 
-
 clean:
-	@rm -rf $(OBJECTS) clean
+	@rm -rf $(OBJ_DIR)* $(TESTOBJ_DIR)*
 	@$(MAKE) -C $(LIBFT_DIR) clean
 	@echo "\033[31mobjects deleted\033[0m"
 
-fclean:
-	@rm -rf $(NAME) $(OBJECTS)
+fclean: clean
+	@rm -rf $(NAME) $(TESTERNAME)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
 	@echo "\033[31mpush_swap deleted\033[0m"
 
