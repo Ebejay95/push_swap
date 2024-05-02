@@ -6,7 +6,7 @@
 #    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/02 17:39:09 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/05/02 22:30:09 by jonathanebe      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,43 +17,38 @@ LIBFT_DIR=libft
 LIBFT=libft.a
 LIBFT_LIB=$(LIBFT_DIR)/$(LIBFT)
 
-CODEDIRS=.
-#CC=cc
-CC=cc -fsanitize=address -g
-CFLAGS= -Wall -Wextra -Werror
-DEPFLAGS= -MP -MD
+CC=cc
+CFLAGS=-Wall -Wextra -Werror -fsanitize=address -g
 LFLAGS=-L$(LIBFT_DIR) -lft
 
 SRCS= \
-./analyzers.c \
-./analyzers2.c \
-./costs_helpers.c \
-./costs.c \
-./helpers.c \
-./input.c \
-./push_swap.c \
-./operations.c \
-./operations2.c \
-./operations3.c \
-./operationshelper.c \
-./psu_handling.c \
-./shifters.c \
-./sort.c \
+./project/analyzers.c \
+./project/analyzers2.c \
+./project/costs_helpers.c \
+./project/costs.c \
+./project/helpers.c \
+./project/input.c \
+./project/push_swap.c \
+./project/operations.c \
+./project/operations2.c \
+./project/operations3.c \
+./project/operationshelper.c \
+./project/psu_handling.c \
+./project/shifters.c \
+./project/sort.c
 
-TESTERSRC= \
-./checker/checker.c \
+TESTERSRC=tester/checker.c
 
 OBJ_DIR=obj/
-TESTOBJ_DIR=checker_obj/
+TESTOBJ_DIR=$(OBJ_DIR)tester/
 OBJECTS=$(SRCS:%.c=$(OBJ_DIR)%.o)
 TESTEROBJECTS=$(TESTERSRC:%.c=$(TESTOBJ_DIR)%.o)
-DEPFILES=push_swap.h
 
-.PHONY:	all clean fclean re libft checker
+.PHONY: all clean fclean re libft checker bonus
 
 all: $(LIBFT_LIB) $(NAME)
 
-bonus: $(TESTERNAME)
+bonus: $(LIBFT_LIB) $(NAME) $(TESTERNAME)
 
 $(OBJ_DIR)%.o: %.c
 	@mkdir -p $(@D)
@@ -64,7 +59,7 @@ $(TESTOBJ_DIR)%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(TESTERNAME): $(TESTEROBJECTS)
-	@$(CC) $(CFLAGS) $(LFLAGS) -o $(TESTERNAME) $(TESTEROBJECTS)
+	@$(CC) $(CFLAGS) $(LFLAGS) -o $@ $^
 	@echo "\033[32mSUCCESS: push_swap checker\033[0m"
 
 $(LIBFT_LIB):
@@ -72,16 +67,16 @@ $(LIBFT_LIB):
 	@$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJECTS)
-	@$(CC) $(CFLAGS) -o $(NAME) $(OBJECTS) $(LFLAGS)
+	@$(CC) $(CFLAGS) $(LFLAGS) -o $@ $^
 	@echo "\033[32mSUCCESS: push_swap\033[0m"
 
 clean:
-	@rm -rf $(OBJ_DIR)* $(TESTOBJ_DIR)*
+	@rm -rf $(OBJ_DIR)
 	@$(MAKE) -C $(LIBFT_DIR) clean
 	@echo "\033[31mobjects deleted\033[0m"
 
 fclean: clean
-	@rm -rf $(NAME) $(TESTERNAME)
+	@rm -f $(NAME) $(TESTERNAME)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
 	@echo "\033[31mpush_swap deleted\033[0m"
 

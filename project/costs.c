@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   costs.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 23:21:42 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 03:02:26 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "./../includes/push_swap.h"
 
 int	get_next_possible_ndx(int current_index, t_dlist **a)
 {

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   sort.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 00:32:06 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 03:24:59 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "./../includes/push_swap.h"
 
 void	sort_three(t_dlist **a)
 {

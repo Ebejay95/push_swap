@@ -6,11 +6,11 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 23:23:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/02 17:21:22 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "./../includes/push_swap.h"
 
 void	handle_string_input(t_dlist **a, char *str, int *e)
 {

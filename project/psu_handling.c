@@ -6,11 +6,11 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 21:54:05 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/04/29 23:52:05 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "./../includes/push_swap.h"
 
 // void	put_content(void *n)
 // {

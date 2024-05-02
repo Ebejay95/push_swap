@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   costs_helpers.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 00:04:09 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 03:02:01 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "./../includes/push_swap.h"
 
 int	make_target(int smallestgreater, int found_smaller, t_dlist **a)
 {

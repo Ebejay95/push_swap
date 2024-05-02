@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   operationshelper.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 00:35:41 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/28 03:29:48 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
+#include "./../includes/push_swap.h"
 
 void	non_connected_a_operations(t_dlist **a, int aop_count, int adirection)
 {

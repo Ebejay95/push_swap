@@ -6,14 +6,14 @@
 /*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 15:18:13 by jeberle           #+#    #+#             */
-/*   Updated: 2024/04/29 23:15:56 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/02 21:50:28 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
-# include "./libft/libft.h"
+# include "./../libft/libft.h"
 
 // push swap unit
 typedef struct s_psu
