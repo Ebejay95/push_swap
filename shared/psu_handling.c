@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   psu_handling.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 21:54:05 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/03 13:32:31 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,14 @@
 // 	ft_putnbr(toput->index);
 // }
 
-// void	put_short(void *n)
-// {
-// 	t_psu	*toput;
-
-// 	if (!n)
-// 		return ;
-// 	toput = (t_psu *)n;
-// 	ft_putnbr(toput->num_data);
-// }
+//void	put_short(void *n)
+//{
+//	t_psu	*toput;
+//	if (!n)
+//		return ;
+//	toput = (t_psu *)n;
+//	ft_putnbr(toput->num_data);
+//}
 
 void	*set_content(int n)
 {
