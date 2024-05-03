@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
+/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 23:23:03 by jeberle           #+#    #+#             */
-/*   Updated: 2024/05/02 21:49:54 by jonathanebe      ###   ########.fr       */
+/*   Updated: 2024/05/03 14:25:42 by jeberle          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	fill_initial(t_dlist **a, int argc, char **argv, int *e)
 	if (argc == 2)
 	{
 		handle_string_input(a, argv[1], e);
-		i++;
 	}
 	else
 		i = 1;
