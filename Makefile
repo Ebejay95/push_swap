@@ -6,13 +6,15 @@
 #    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/04 14:44:32 by jeberle          ###   ########.fr        #
+#    Updated: 2024/05/04 16:12:47 by jeberle          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 # VPATH: https://www.gnu.org/software/make/manual/html_node/General-Search.html
 # vpath: https://www.gnu.org/software/make/manual/html_node/Selective-Search.html
+#	@echo "$(RED) ████▒░▒████▒░ ████▒░ ██▒░░▒██▒░██████▒░██▒░    ██▒░"
+#@echo "$(YELLOW)  Compiling: $(DEF_COLOR)$(PURPLE)$(NAME) Mandatory Part By:$(DEF_COLOR)
  make DEBUG=1
 #NAME=push_swap
 #TESTERNAME=checker
