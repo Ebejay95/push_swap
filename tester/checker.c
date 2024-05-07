@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 21:53:19 by jonathanebe       #+#    #+#             */
-/*   Updated: 2024/05/03 13:32:51 by jeberle          ###   ########.fr       */
+/*   Updated: 2024/05/04 21:38:08 by jonathanebe      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,17 +49,14 @@ void	perform_check_op(t_dlist **a, t_dlist **b, char *op)
 int	check_sorting(t_dlist **a, t_dlist **b)
 {
 	char	*operation;
-	int		linecount;
 
 	operation = NULL;
-	linecount = 0;
 	while (1)
 	{
 		operation = get_next_line(0);
 		if (operation == NULL)
 			break ;
 		perform_check_op(a, b, operation);
-		linecount++;
 		free(operation);
 	}
 	return (is_sorted(a, b));

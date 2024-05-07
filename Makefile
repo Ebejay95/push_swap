@@ -6,7 +6,7 @@
 #    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/04 21:20:22 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/05/04 22:29:03 by jonathanebe      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,16 +22,16 @@ MAGENTA := \033[35m
 CYAN := \033[36m
 X := \033[0m
 
-INTRO := \n$(RED)\
-███████████████████████████████████████████████████████████████$(X)\n\
+SUCCESS := \n$(RED)\
+████████████████████████████████████████████████████████████████████████$(X)\n\
 $(X)\n\
-██████  █    █  ██████ █    █    ██████  █    █  ██████  ██████$(X)\n\
-█    █  █    █  █      █    █    █       █    █  █    █  █    █$(X)\n\
-██████  █    █  ██████ ██████    ██████  █    █  ██████  ██████$(X)\n\
-█       █    █       █ █    █         █  █ ██ █  █    █  █     $(X)\n\
-█       ██████  ██████ █    █    ██████  ██  ██  █    █  █     $(X)\n\
+███████  █     █  ███████  █     █    ███████  █     █  ███████  ███████$(X)\n\
+█     █  █     █  █        █     █    █        █     █  █     █  █     █$(X)\n\
+███████  █     █  ███████  ███████    ███████  █  █  █  ███████  ███████$(X)\n\
+█        █     █        █  █     █          █  █ █ █ █  █     █  █      $(X)\n\
+█        ███████  ███████  █     █    ███████  ██   ██  █     █  █      $(X)\n\
 $(X)\n\
-$(RED)███████████████████████████████████████████████████████████████$(X)\n\
+$(RED)████████████████████████████████████████████████████████████████████████$(X)\n\
 
 
 #------------------------------------------------------------------------------#
@@ -50,6 +50,7 @@ CFLAGS=-Wall -Wextra -Werror
 ifeq ($(DEBUG), 1)
 	CFLAGS += -fsanitize=address -g
 endif
+DEPFLAGS=-MMD -MP
 
 #------------------------------------------------------------------------------#
 #--------------                        DIR                        -------------#
@@ -57,11 +58,11 @@ endif
 
 OBJ_DIR := ./obj
 DEP_DIR := $(OBJ_DIR)/.deps
-#INC_DIRS := 
+INC_DIRS := .
 SRC_DIRS := project shared tester
 
 vpath %.c $(SRC_DIRS)
-#vpath %.h $(INC_DIRS)
+vpath %.h $(INC_DIRS)
 vpath %.d $(DEP_DIR)
 
 #------------------------------------------------------------------------------#
@@ -78,32 +79,32 @@ LIBFTFLAGS=-L$(LIBFT_DIR) -lft
 #------------------------------------------------------------------------------#
 
 SRCS= \
-./project/push_swap.c
+push_swap.c
 
 SHARED_SRCS= \
-./shared/analyzers.c \
-./shared/analyzers2.c \
-./shared/costs_helpers.c \
-./shared/costs.c \
-./shared/helpers.c \
-./shared/input.c \
-./shared/operations.c \
-./shared/operations2.c \
-./shared/operations3.c \
-./shared/operationshelper.c \
-./shared/psu_handling.c \
-./shared/shifters.c \
-./shared/sort.c
+analyzers.c \
+analyzers2.c \
+costs_helpers.c \
+costs.c \
+helpers.c \
+input.c \
+operations.c \
+operations2.c \
+operations3.c \
+operationshelper.c \
+psu_handling.c \
+shifters.c \
+sort.c
 
-TEST_SRCS=tester/checker.c
+TEST_SRCS=checker.c
 
 #------------------------------------------------------------------------------#
 #--------------                      OBJECTS                      -------------#
 #------------------------------------------------------------------------------#
 
-OBJECTS=$(SRCS:%.c=$(OBJ_DIR)%.o)
-SHARED_OBJECTS=$(SHARED_SRCS:%.c=$(OBJ_DIR)%.o)
-TEST_OBJECTS=$(TEST_SRCS:%.c=$(TESTOBJ_DIR)%.o)
+OBJECTS := $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.o))
+SHARED_OBJECTS := $(addprefix $(OBJ_DIR)/, $(SHARED_SRCS:%.c=%.o))
+TEST_OBJECTS := $(addprefix $(OBJ_DIR)/, $(TEST_SRCS:%.c=%.o))
 
 #------------------------------------------------------------------------------#
 #--------------                      COMPILE                      -------------#
@@ -112,20 +113,19 @@ TEST_OBJECTS=$(TEST_SRCS:%.c=$(TESTOBJ_DIR)%.o)
 .PHONY: all clean fclean re libft
 
 all: $(LIBFT_LIB) $(NAME)
-	@echo "$(INTRO)";
 
 bonus: $(TESTERNAME) $(NAME)
 
 -include $(SHARED_OBJECTS:.o=.d)
 -include $(TEST_OBJECTS:.o=.d)
 
-$(OBJ_DIR)%.o: %.c
+$(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -MMD -c $< -o $@
+	@$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 $(TESTOBJ_DIR)%.o: %.c
 	@mkdir -p $(@D)
-	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+	@$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 $(TESTERNAME): $(LIBFT_LIB) $(SHARED_OBJECTS) $(TEST_OBJECTS)
 	@$(CC) $(LIBFTFLAGS) -o $@ $^
@@ -137,12 +137,12 @@ $(LIBFT_LIB):
 
 $(NAME): $(OBJECTS) $(SHARED_OBJECTS)
 	@$(CC) $(LIBFTFLAGS) -o $@ $^
-	@echo "\033[32mSUCCESS: push_swap\033[0m"
+	@echo "$(GREEN)SUCCESS:$(X)\n$(SUCCESS)"
 
 clean:
 	@rm -rf $(OBJ_DIR)
 	@$(MAKE) -C $(LIBFT_DIR) clean
-	@echo "\033[31mSHARED_OBJECTS deleted\033[0m"
+	@echo "\033[31mobjects deleted\033[0m"
 
 fclean: clean
 	@rm -f $(NAME) $(TESTERNAME)
