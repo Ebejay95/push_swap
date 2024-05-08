@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jonathaneberle <jonathaneberle@student.    +#+  +:+       +#+         #
+#    By: jeberle <jeberle@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/14 11:02:33 by jeberle           #+#    #+#              #
-#    Updated: 2024/05/04 22:29:03 by jonathanebe      ###   ########.fr        #
+#    Updated: 2024/05/08 08:04:10 by jeberle          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -128,7 +128,7 @@ $(TESTOBJ_DIR)%.o: %.c
 	@$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 $(TESTERNAME): $(LIBFT_LIB) $(SHARED_OBJECTS) $(TEST_OBJECTS)
-	@$(CC) $(LIBFTFLAGS) -o $@ $^
+	@$(CC) -o $@ $^ $(LIBFTFLAGS) 
 	@echo "\033[32mSUCCESS: push_swap checker\033[0m"
 
 $(LIBFT_LIB):
@@ -136,7 +136,7 @@ $(LIBFT_LIB):
 	@$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(OBJECTS) $(SHARED_OBJECTS)
-	@$(CC) $(LIBFTFLAGS) -o $@ $^
+	@$(CC) -o $@ $^ $(LIBFTFLAGS)
 	@echo "$(GREEN)SUCCESS:$(X)\n$(SUCCESS)"
 
 clean:
