@@ -1,4 +1,4 @@
-i [pushswap img](https://raw.githubusercontent.com/Ebejay95/push_swap/master/push_swap.gif)
+![pushswap img](https://raw.githubusercontent.com/Ebejay95/push_swap/master/push_swap.gif)
 # push_swap
 
 **A project to sort a stack using a limited set of operations in C.**
